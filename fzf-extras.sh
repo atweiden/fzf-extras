@@ -7,11 +7,17 @@ fe() {
   [ -n "$file" ] && ${EDITOR:-vim} "$file"
 }
 
-# Equivalent to above, but opens it with `xdg-open` command
+# Modified version of fe() where you can press
+#   - CTRL-O to open with `xdg-open` command,
+#   - CTRL-E or Enter key to open with the $EDITOR
 fo() {
-  local file
-  file=$(fzf-tmux --query="$1" --select-1 --exit-0)
-  [ -n "$file" ] && xdg-open "$file"
+  local out file key
+  out=$(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+  key=$(head -1 <<< "$out")
+  file=$(head -2 <<< "$out" | tail -1)
+  if [ -n "$file" ]; then
+    [ "$key" = ctrl-o ] && xdg-open "$file" || ${EDITOR:-vim} "$file"
+  fi
 }
 
 # fd - cd to selected directory
