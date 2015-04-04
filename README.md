@@ -16,7 +16,7 @@ bash cmdline         | description
 `fkill`              | Select process to kill (alternatively, type `kill`<kbd><Tab></kbd>)
 `fopen`              | Equivalent to `fe`, but opens it with `xdg-open`
 `fs [FUZZY PATTERN]` | Select tmux session
-`fshow`              | Git commit browser (<kbd>Enter</kbd> for show, <kbd>Ctrl+d</kbd> for diff, backtick <kbd>`</kbd> toggles sort)
+`fshow`              | Git commit browser (<kbd>Enter</kbd> for show, <kbd>Ctrl+D</kbd> for diff, backtick <kbd>`</kbd> toggles sort)
 `ftags`              | Search ctags
 `ftpane`             | Switch pane
 `v`                  | Open files in `~/.viminfo`
@@ -25,7 +25,7 @@ bash cmdline         | description
 
 zsh cmdline      | description
 ---              | ---
-<kbd>Alt-i</kbd> | Paste the selected entry from locate output into the command line
+<kbd>Alt-i</kbd> | Paste the selected entry from `locate` output into the command line
 
 
 Sources
