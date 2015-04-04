@@ -14,7 +14,7 @@ bash cmdline         | description
 `fh`                 | Select line from history, repeat without editing
 `fhe`                | Select line from history, leave for editing
 `fkill`              | Select process to kill (alternatively, type `kill`<kbd>Tab</kbd>)
-`fopen`              | Equivalent to `fe`, but opens it with `xdg-open`
+`fo`                 | Equivalent to `fe`, but opens it with `xdg-open`
 `fs [FUZZY PATTERN]` | Select tmux session
 `fshow`              | Git commit browser (<kbd>Enter</kbd> for show, <kbd>Ctrl+D</kbd> for diff, backtick <kbd>`</kbd> toggles sort)
 `ftags`              | Search ctags
