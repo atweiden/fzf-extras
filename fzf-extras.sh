@@ -95,7 +95,7 @@ fshow() {
     if [ "$k" = 'ctrl-d' ]; then
       git diff --color=always $shas | less -R
     elif [ "$k" = 'ctrl-o' ]; then
-      git checkout $shas 
+      git checkout $shas
     else
       for sha in $shas; do
         git show --color=always $sha | less -R
