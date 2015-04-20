@@ -16,7 +16,7 @@ bash cmdline         | description
 `fkill`              | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
 `fo`                 | Equivalent to `fe`, but opens it with `xdg-open` if you press <kbd>Ctrl+O</kbd>
 `fs [FUZZY PATTERN]` | Select tmux session
-`fshow`              | Git commit browser (<kbd>Enter</kbd> for show, <kbd>Ctrl+D</kbd> for diff, backtick <kbd>`</kbd> toggles sort)
+`fshow`              | Git commit browser (<kbd>Enter</kbd> for `show`, <kbd>Ctrl+O</kbd> for `checkout`, <kbd>Ctrl+D</kbd> for `diff`, backtick <kbd>`</kbd> toggles sort)
 `ftags`              | Search ctags
 `ftpane`             | Switch pane
 `v`                  | Open files in `~/.viminfo`
