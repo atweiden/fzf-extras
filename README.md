@@ -7,7 +7,8 @@ bash cmdline         | description
 ---                  | ---
 `cdf`                | cd into the directory of the selected file
 `fbr`                | Checkout Git branch (including remote branches)
-`fco`                | Checkout Git commit
+`fco`                | Checkout Git branch/tag
+`fcoc`               | Checkout Git commit
 `fd`                 | cd into selected directory
 `fda`                | cd into selected directory, including hidden directories
 `fe [FUZZY PATTERN]` | Open the selected file with the default editor
