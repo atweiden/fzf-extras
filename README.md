@@ -9,6 +9,7 @@ bash cmdline         | description
 `fbr`                | Checkout Git branch (including remote branches)
 `fco`                | Checkout Git branch/tag
 `fcoc`               | Checkout Git commit
+`fcs`                | Get Git commit SHA hash
 `fd`                 | cd into selected directory
 `fda`                | cd into selected directory, including hidden directories
 `fe [FUZZY PATTERN]` | Open the selected file with the default editor
