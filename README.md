@@ -19,6 +19,7 @@ bash cmdline         | description
 `fo`                 | Equivalent to `fe`, but opens it with `xdg-open` if you press <kbd>Ctrl+O</kbd>
 `fs [FUZZY PATTERN]` | Select tmux session
 `fshow`              | Git commit browser
+`fstash`             | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
 `ftags`              | Search ctags
 `ftpane`             | Switch pane
 `v`                  | Open files in `~/.viminfo`
