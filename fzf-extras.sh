@@ -162,13 +162,14 @@ fs() {
   tmux switch-client -t "$session"
 }
 
-# ftpane - switch pane
-ftpane () {
-  local panes current_window target target_window target_pane
+# ftpane - switch pane (@george-b)
+ftpane() {
+  local panes current_window current_pane target target_window target_pane
   panes=$(tmux list-panes -s -F '#I:#P - #{pane_current_path} #{pane_current_command}')
-  current_window=$(tmux display-message  -p '#I')
+  current_pane=$(tmux display-message -p '#I:#P')
+  current_window=$(tmux display-message -p '#I')
 
-  target=$(echo "$panes" | fzf) || return
+  target=$(echo "$panes" | grep -v "$current_pane" | fzf +m --reverse) || return
 
   target_window=$(echo $target | awk 'BEGIN{FS=":|-"} {print$1}')
   target_pane=$(echo $target | awk 'BEGIN{FS=":|-"} {print$2}' | cut -c 1)
