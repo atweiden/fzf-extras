@@ -31,6 +31,22 @@ fda() {
   DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
 }
 
+# fdr - cd to selected parent directory
+fdr() {
+  local declare dirs=()
+  get_parent_dirs() {
+    dirs+=("$1")
+    if [[ ${1} == '/' ]]; then
+      for _dir in ${dirs[@]}; do
+        echo $_dir
+      done
+    else
+      get_parent_dirs $(dirname $1)
+    fi
+  }
+  DIR=$(get_parent_dirs ${1:-$(pwd)} | fzf-tmux --tac) && cd "$DIR"
+}
+
 # cdf - cd into the directory of the selected file
 cdf() {
    local file

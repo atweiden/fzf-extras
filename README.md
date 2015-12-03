@@ -12,6 +12,7 @@ bash cmdline         | description
 `fcs`                | Get Git commit SHA hash
 `fd`                 | cd into selected directory
 `fda`                | cd into selected directory, including hidden directories
+`fdr`                | cd into selected parent directory
 `fe [FUZZY PATTERN]` | Open the selected file with the default editor
 `fh`                 | Select line from history, repeat without editing
 `fhe`                | Select line from history, leave for editing
