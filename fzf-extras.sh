@@ -6,6 +6,7 @@ fe() {
 '
   local declare files=($(fzf-tmux --query="$1" --select-1 --exit-0))
   [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+  unset IFS
 }
 
 # Modified version of fe() where you can press
