@@ -38,6 +38,10 @@ Sources
 - [fzf wiki](https://github.com/junegunn/fzf/wiki)
 - [junegunn/dotfiles](https://github.com/junegunn/dotfiles)
 
+See Also
+--------
+
+- [DanielFGray/fzf-scripts](https://github.com/DanielFGray/fzf-scripts)
 
 License
 -------
