@@ -2,11 +2,9 @@
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
 fe() {
-  IFS='
-'
-  local declare files=($(fzf-tmux --query="$1" --select-1 --exit-0))
+  local files
+  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
   [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
-  unset IFS
 }
 
 # Modified version of fe() where you can press
@@ -14,27 +12,26 @@ fe() {
 #   - CTRL-E or Enter key to open with the $EDITOR
 fo() {
   local out file key
-  IFS=$'\n' read -d '' -r -a out < <(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
-  key=${out[0]}
-  file=${out[1]}
+  IFS=$'\n' out=($(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e))
+  key=$(head -1 <<< "$out")
+  file=$(head -2 <<< "$out" | tail -1)
   if [ -n "$file" ]; then
-    if [ "$key" = ctrl-o ]; then
-      open "$file"
-    else
-      ${EDITOR:-vim} "$file"
-    fi
+    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
   fi
 }
 
 # fd - cd to selected directory
 fd() {
-  DIR=`find ${1:-*} -path '*/\.*' -prune -o -type d -print 2> /dev/null | fzf-tmux` \
-    && cd "$DIR"
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
 }
 
 # fda - including hidden directories
 fda() {
-  DIR=`find ${1:-.} -type d 2> /dev/null | fzf-tmux` && cd "$DIR"
+  local dir
+  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
 }
 
 # fdr - cd to selected parent directory
@@ -48,7 +45,7 @@ fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$(pwd)}") | fzf-tmux --tac)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux --tac)
   cd "$DIR"
 }
 
@@ -59,14 +56,19 @@ cdf() {
    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
 }
 
-# utility function used to write the command in the shell
-writecmd() {
-  perl -e '$TIOCSTI = 0x5412; $l = <STDIN>; $lc = $ARGV[0] eq "-run" ? "\n" : ""; $l =~ s/\s*$/$lc/; map { ioctl STDOUT, $TIOCSTI, $_; } split "", $l;' -- $1
+# utility function used to run the command in the shell
+runcmd () {
+  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, <>'
 }
 
 # fh - repeat history
 fh() {
-  ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -re 's/^\s*[0-9]+\s*//' | writecmd -run
+  ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -re 's/^\s*[0-9]+\s*//' | runcmd
+}
+
+# utility function used to write the command in the shell
+writecmd () {
+  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, do { chomp($_ = <>); $_ }'
 }
 
 # fhe - repeat history edit
