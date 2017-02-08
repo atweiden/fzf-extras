@@ -24,6 +24,7 @@ bash cmdline         | description
 `ftags`              | Search ctags
 `ftpane`             | Switch pane
 `v`                  | Open files in `~/.viminfo`
+`runcmd`             | Utility function used to run the command in the shell
 `writecmd`           | Utility function used to write the command in the shell
 
 
