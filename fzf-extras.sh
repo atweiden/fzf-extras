@@ -78,18 +78,21 @@ fhe() {
 
 # fkill - kill process
 fkill() {
+  local pid
   pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
 
   if [ "x$pid" != "x" ]
   then
-    kill -${1:-9} $pid
+    echo $pid | xargs kill -${1:-9}
   fi
 }
 
 # fbr - checkout git branch (including remote branches)
+#   - sorted by most recent commit
+#   - limit 30 last branches
 fbr() {
   local branches branch
-  branches=$(git branch --all | grep -v HEAD) &&
+  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
   branch=$(echo "$branches" |
            fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
