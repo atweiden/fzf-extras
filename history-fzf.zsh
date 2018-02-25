@@ -25,9 +25,11 @@ function history-fzf() {
     done
 
     # Set HISTORY_FILTER option
+    # NOTE neet space at the first string
     case $HISTORY_FILTER in
-      'fzf-tmux') HISTORY_FILTER+=' --reverse' ;;
-      'fzy')      HISTORY_FILTER+=' -l 20'     ;;
+      'fzf-tmux') HISTORY_FILTER+=' --reverse --no-sort' ;;
+      'fzy')      HISTORY_FILTER+=' -l 20'               ;;
+      'fzf')      HISTORY_FILTER+=' --no-sort'           ;;
     esac
   fi
 
