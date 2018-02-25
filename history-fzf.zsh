@@ -1,5 +1,6 @@
 #!/bin/zsh
 # Ctrl+Rで$HISTORY_FILEのあいまい検索および実行
+# `HISTORY_FILTER=fzy -l 40`などとして、フィルターを変更できます
 function history-fzf() {
   local tac
   if which tac > /dev/null; then  # for Linux
@@ -28,9 +29,9 @@ function history-fzf() {
       'fzf-tmux') HISTORY_FILTER+=' --reverse' ;;
       'fzy')      HISTORY_FILTER+=' -l 20'     ;;
     esac
-    # HISTORY_FILTER+=' --query "$LBUFFER"'
   fi
 
+  # [MAIN] Select history using FuzzyFinder
   BUFFER=$(history -n 1 | eval $tac | eval "$HISTORY_FILTER --query '$LBUFFER'")
   CURSOR=$#BUFFER
 
