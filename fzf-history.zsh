@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Ctrl+Rで$HISTORY_FILEのあいまい検索および実行
 # `HISTORY_FILTER=fzy -l 40`などとして、フィルターを変更できます
-function history-fzf() {
+function fzf-history() {
   local tac
   if which tac > /dev/null; then  # for Linux
     tac="tac"
@@ -40,5 +40,5 @@ function history-fzf() {
   zle reset-prompt
 }
 
-zle -N history-fzf
-bindkey '^r' history-fzf
+zle -N fzf-history
+bindkey '^r' fzf-history
