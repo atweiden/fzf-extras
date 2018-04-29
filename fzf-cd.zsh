@@ -4,7 +4,7 @@
 
 # ALT-G - cd into the directory contained selected file
 fzf-cd-basename-widget() {
-    dirname $(fzf) | cd
+    dirname $(rg --files --no-ignore --hidden --follow --glob "!.git/*" 2> /dev/null | fzf) | cd
     local ret=$?
     zle fzf-redraw-prompt
     typeset -f zle-line-init >/dev/null && zle zle-line-init
