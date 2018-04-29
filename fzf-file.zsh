@@ -13,3 +13,5 @@ fzf-cd-basename-widget() {
 }
 zle -N fzf-cd-basename-widget
 bindkey '\eg' fzf-cd-basename-widget
+
+alias e='$EDITOR $(fasd -f | awk "{print \$2}" | fzf --tac --no-sort --multi)'
