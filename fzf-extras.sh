@@ -78,7 +78,7 @@ _fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux --tac)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux -d 20% --reverse --no-sort)
   cd "$DIR"
 }
 
