@@ -213,12 +213,10 @@ ftpane() {
 }
 
 # e - open 'frecency' files in $VISUAL editor
-alias e='$VISUAL $(fasd -f | fzf-tmux --reverse --tac --no-sort --multi | grep -o "/.*")'
-# # v - open files in ~/.viminfo
-# v() {
-#   local files
-#   files=$(grep '^>' ~/.viminfo | cut -c3- |
-#           while read line; do
-#             [ -f "${line/\~/$HOME}" ] && echo "$line"
-#           done | fzf-tmux -d -m -q "$*" -1) && vim ${files//\~/$HOME}
-# }
+e() {
+  local files
+    files=$(fasd -f |\
+        fzf-tmux --reverse --tac --no-sort --multi --query "$*" -1 |\
+        grep -o "/.*")
+    [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
+}
