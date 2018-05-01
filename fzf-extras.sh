@@ -24,27 +24,28 @@ fo() {
 # zd - cd to selected options below
 zd() {
     usage() {
-        echo "usage: zd [OPTIONS] [PATH]"
-        echo "zd: cd to selected options below"
-        echo "-d: Directory (default)"
-        echo "-a: Directory included hidden"
-        echo "-r: Parent directory"
-        echo "-f: Directory of the selected file"
-        echo "-h: Print this usage"
+        echo "usage: zd [OPTIONS]"
+        echo "\tzd: cd to selected options below"
+        echo "OPTIONS:"
+        echo "\t-d: Directory (default)"
+        echo "\t-a: Directory included hidden"
+        echo "\t-r: Parent directory"
+        echo "\t-f: Directory of the selected file"
+        echo "\t-z: Selectable cd to frecency directory"
+        echo "\t-h: Print this usage"
         break
     }
-
-    # local dir
 
     if [ ! $1 ]; then
         _fd
     else
-        while getopts darfh OPT; do
+        while getopts darfzh OPT; do
             case $OPT in
                 d) _fd;;
                 a) _fda;;
                 r) _fdr;;
                 f) _cdf;;
+                z) zz;;
                 h) usage;;
                 *) usage;;
             esac
@@ -252,4 +253,10 @@ e() {
         fzf-tmux --reverse --tac --no-sort --multi --query "$*" -1 |\
         grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
+}
+
+# zz - selectable cd to frecency directory
+zz() {
+    cd $(z | fzf-tmux --tac --reverse --no-sort\
+        -1 +m --query "$*" | grep -o '/.*')
 }
