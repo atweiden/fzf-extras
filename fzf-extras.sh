@@ -27,11 +27,11 @@ zd() {
         echo "usage: zd [OPTIONS]"
         echo "\tzd: cd to selected options below"
         echo "OPTIONS:"
-        echo "\t-d: Directory (default)"
-        echo "\t-a: Directory included hidden"
-        echo "\t-r: Parent directory"
-        echo "\t-f: Directory of the selected file"
-        echo "\t-z: Selectable cd to frecency directory"
+        echo "\t-d [path]: Directory (default)"
+        echo "\t-a [path]: Directory included hidden"
+        echo "\t-r [path]: Parent directory"
+        echo "\t-f [query]: Directory of the selected file"
+        echo "\t-z [query]: Selectable cd to frecency directory"
         echo "\t-h: Print this usage"
     }
 
@@ -40,11 +40,11 @@ zd() {
     else
         while getopts darfzh OPT; do
             case $OPT in
-                d) _fd  ; return 0;;
-                a) _fda ; return 0;;
-                r) _fdr ; return 0;;
-                f) _cdf ; return 0;;
-                z) _zz  ; return 0;;
+                d) shift; _fd  $1; return 0;;
+                a) shift; _fda $1; return 0;;
+                r) shift; _fdr $1; return 0;;
+                f) shift; _cdf "$*"; return 0;;
+                z) shift; _zz  "$*"; return 0;;
                 h) usage; return 0;;
                 *) usage; return 1;;
             esac
@@ -78,15 +78,14 @@ _fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux -d 20% --reverse --no-sort)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzy)
   cd "$DIR"
 }
 
 # _cdf - cd into the directory of the selected file
 _cdf() {
    local file
-   local dir
-   file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+   file=$(fzf +m -q "$*") && cd $(dirname "$file")
 }
 
 # utility function used to run the command in the shell
@@ -257,7 +256,7 @@ e() {
 # zz - selectable cd to frecency directory
 _zz() {
     local dir
-    dir=$(fasd -z |\
+    dir=$(fasd -d |\
         fzf-tmux --tac --reverse --no-sort -1 +m --query "$*" |\
            grep -o '/.*')
     [ $dir ] && cd $dir
