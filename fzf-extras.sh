@@ -37,13 +37,15 @@ zd() {
 
     if [ ! $1 ]; then
         _fd
+    elif [ $1 = ".." ]; then
+        shift; _fdr $1
     elif [ $1 = '-' ]; then
         shift; _fst "$*"
     else
         while getopts darfzh OPT; do
             case $OPT in
-                d) shift; _fd  $1; return 0;;
-                a) shift; _fda $1; return 0;;
+                d) shift; _fd  $(realpath $1); return 0;;
+                a) shift; _fda $(realpath $1); return 0;;
                 r) shift; _fdr $1; return 0;;
                 f) shift; _cdf "$*"; return 0;;
                 z) shift; _zz  "$*"; return 0;;
