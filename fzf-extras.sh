@@ -37,6 +37,8 @@ zd() {
 
     if [ ! $1 ]; then
         _fd
+    elif [ $1 = '-' ]; then
+        shift; _fst "$*"
     else
         while getopts darfzh OPT; do
             case $OPT in
@@ -86,6 +88,13 @@ _fdr() {
 _cdf() {
    local file
    file=$(fzf +m -q "$*") && cd $(dirname "$file")
+}
+
+# cd into the directory from stack
+_fst() {
+    local dir
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzy -q "$*")
+    [ $dir ] && cd $dir
 }
 
 # utility function used to run the command in the shell
