@@ -33,7 +33,6 @@ zd() {
         echo "\t-f: Directory of the selected file"
         echo "\t-z: Selectable cd to frecency directory"
         echo "\t-h: Print this usage"
-        break
     }
 
     if [ ! $1 ]; then
@@ -41,13 +40,13 @@ zd() {
     else
         while getopts darfzh OPT; do
             case $OPT in
-                d) _fd;;
-                a) _fda;;
-                r) _fdr;;
-                f) _cdf;;
-                z) zz;;
-                h) usage;;
-                *) usage;;
+                d) _fd  ; return 0;;
+                a) _fda ; return 0;;
+                r) _fdr ; return 0;;
+                f) _cdf ; return 0;;
+                z) _zz  ; return 0;;
+                h) usage; return 0;;
+                *) usage; return 1;;
             esac
         done
     fi
@@ -248,15 +247,19 @@ ftpane() {
 
 # e - open 'frecency' files in $VISUAL editor
 e() {
-  local files
+    local files
     files=$(fasd -f |\
-        fzf-tmux --reverse --tac --no-sort --multi --query "$*" -1 |\
-        grep -o "/.*")
+        fzf-tmux --reverse --tac --no-sort -1 --multi --query "$*" |\
+            grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
 }
 
 # zz - selectable cd to frecency directory
-zz() {
-    cd $(z | fzf-tmux --tac --reverse --no-sort\
-        -1 +m --query "$*" | grep -o '/.*')
+_zz() {
+    local dir
+    dir=$(fasd -z |\
+        fzf-tmux --tac --reverse --no-sort -1 +m --query "$*" |\
+           grep -o '/.*')
+    [ $dir ] && cd $dir
 }
+alias zz='_zz $*'
