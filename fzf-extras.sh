@@ -102,8 +102,8 @@ _cdf() {
 # _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g'\
-        | fzf-tmux --reverse +m -1 -q "$*")
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' |\
+        fzf-tmux --reverse -1 --no-sort --no-multi --query "$*")
     [ $dir ] && cd $dir
 }
 
@@ -266,18 +266,20 @@ ftpane() {
 # e - open 'frecency' files in $VISUAL editor
 e() {
     local files
-    files=$(fasd -f |\
-        fzf-tmux --reverse --tac --no-sort -1 --multi --query "$*" |\
-            grep -o "/.*")
+    files=$(fasd -fl |\
+                fzf-tmux --tac --reverse -1\
+                --no-sort  --multi --query "$*" |\
+                    grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
 }
 
-# zz - selectable cd to frecency directory
+# _zz - selectable cd to frecency directory
 _zz() {
     local dir
-    dir=$(fasd -d |\
-        fzf-tmux --tac --reverse --no-sort -1 +m --query "$*" |\
-           grep -o '/.*')
+    dir=$(fasd -dl |\
+            fzf-tmux --tac --reverse -1\
+            --no-sort --no-multi --query "$*" |\
+               grep -o '/.*')
     [ $dir ] && cd $dir
 }
-alias zz='_zz $*'
+alias zz='zd -z $*'
