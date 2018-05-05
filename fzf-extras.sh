@@ -21,7 +21,7 @@ fo() {
 }
 
 
-# zd - cd to selected options below
+# zd - cd to selected directory
 zd() {
     usage() {
         echo "usage: zd [OPTIONS]"
@@ -30,23 +30,30 @@ zd() {
         echo "\t-d [path]: Directory (default)"
         echo "\t-a [path]: Directory included hidden"
         echo "\t-r [path]: Parent directory"
+        echo "\t-s [query]: Directory from stack"
         echo "\t-f [query]: Directory of the selected file"
-        echo "\t-z [query]: Selectable cd to frecency directory"
+        echo "\t-z [query]: Frecency directory"
         echo "\t-h: Print this usage"
     }
 
+    # No arg
     if [ ! $1 ]; then
         _fd
-    elif [ $1 = ".." ]; then
+    # Args is '..' or '-' or [path]
+    elif [ $1 = '..' ]; then
         shift; _fdr $1
     elif [ $1 = '-' ]; then
         shift; _fst "$*"
+    elif [ ${1:0:1} != '-' ]; then  # first string is not -
+        _fd $(realpath $1)
+    # Args is start from '-'
     else
-        while getopts darfzh OPT; do
+        while getopts darfszh OPT; do
             case $OPT in
-                d) shift; _fd  $(realpath $1); return 0;;
-                a) shift; _fda $(realpath $1); return 0;;
+                d) shift; _fd  $1; return 0;;
+                a) shift; _fda $1; return 0;;
                 r) shift; _fdr $1; return 0;;
+                s) shift; _fst "$*"; return 0;;
                 f) shift; _cdf "$*"; return 0;;
                 z) shift; _zz  "$*"; return 0;;
                 h) usage; return 0;;
@@ -92,10 +99,11 @@ _cdf() {
    file=$(fzf +m -q "$*") && cd $(dirname "$file")
 }
 
-# cd into the directory from stack
+# _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzy -q "$*")
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g'\
+        | fzf-tmux --reverse +m -1 -q "$*")
     [ $dir ] && cd $dir
 }
 
