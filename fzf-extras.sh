@@ -21,7 +21,8 @@ fo() {
 }
 
 
-# zd - cd to selected directory
+# zd - cd into selected directory with options
+# The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
 zd() {
     usage() {
         echo "usage: zd [OPTIONS]"
