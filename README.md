@@ -5,14 +5,19 @@ Additional key bindings for fzf, primarily Bash.
 
 bash cmdline         | description
 ---                  | ---
-`cdf`                | cd into the directory of the selected file
+
+`zd`                 | cd into selected directory with options
+                     | The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+`_fd`                | cd into selected directory
+`_fda`               | cd into selected directory, including hidden directories
+`_fdr`               | cd into selected parent directory
+`_fst`               | cd into the directory from stack
+`_cdf`               | cd into the directory of the selected file
+`_zz`                | selectable cd to frecency directory
 `fbr`                | Checkout Git branch (including remote branches)
 `fco`                | Checkout Git branch/tag
 `fcoc`               | Checkout Git commit
 `fcs`                | Get Git commit SHA hash
-`fd`                 | cd into selected directory
-`fda`                | cd into selected directory, including hidden directories
-`fdr`                | cd into selected parent directory
 `fe [FUZZY PATTERN]` | Open the selected file with the default editor
 `fh`                 | Select line from history, repeat without editing
 `fhe`                | Select line from history, leave for editing
@@ -26,6 +31,7 @@ bash cmdline         | description
 `v`                  | Open files in `~/.viminfo`
 `runcmd`             | Utility function used to run the command in the shell
 `writecmd`           | Utility function used to write the command in the shell
+`e`                  | open 'frecency' files in $VISUAL editor
 
 
 zsh cmdline      | description
