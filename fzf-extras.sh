@@ -325,4 +325,3 @@ _zz() {
                grep -o '/.*')
     [ $dir ] && cd $dir
 }
-alias zz='zd -z $*'
