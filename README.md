@@ -26,6 +26,8 @@ bash cmdline         | description
 `fs [FUZZY PATTERN]` | Select tmux session
 `fshow`              | Git commit browser
 `fstash`             | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
+`fzf-gitlog-widget`  | git log browser
+`fzf-gitlog-multi-widget` | Multi-Selectable git show
 `ftags`              | Search ctags
 `ftpane`             | Switch pane
 `v`                  | Open files in `~/.viminfo`
@@ -37,6 +39,7 @@ bash cmdline         | description
 zsh cmdline      | description
 ---              | ---
 <kbd>Alt-i</kbd> | Paste the selected entry from `locate` output into the command line
+<kbd>Alt-r</kbd> | Fuzzy History Search
 
 
 Sources

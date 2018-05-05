@@ -15,6 +15,7 @@ bindkey '\ei' fzf-locate-widget
 fi
 
 
+# Fuzzy History Search
 # Ctrl+Rで$HISTORY_FILEのあいまい検索および実行
 # `HISTORY_FILTER=fzy -l 40`などとして、フィルターを変更できます
 function fzf-history() {
