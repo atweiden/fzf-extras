@@ -102,7 +102,7 @@ _cdf() {
 # _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g' |\
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' |
         fzf-tmux --reverse -1 --no-sort --no-multi --query "$*")
     [ $dir ] && cd $dir
 }
@@ -238,6 +238,31 @@ fzf-gitlog-widget() {
     eval "$git_cmd | $fzf_cmd"
 }
 
+# Multi-Selectable git show
+#
+# 1. Show git log --graph
+# 2. Fuzzy Search
+# 3. Select Tab key
+# 4. Enter, then push selected commit message into STDOUT
+#
+# You can use pipe like below
+# ```
+# fzf-gitlog-multi-widget | grep date  # Show only date
+# fzf-gitlog-multi-widget | less -P 'hoge'  # Commit messege highlight 'hoge'
+# ```
+#
+fzf-gitlog-multi-widget() {
+    git_cmd="git log --all --graph --date-order\
+    --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
+    --date=short --color=always"
+
+    fzf_cmd="fzf --multi --ansi --reverse --no-sort --tiebreak=index\
+    --bind=ctrl-x:toggle-sort"
+
+    eval "$git_cmd | $fzf_cmd" |
+        grep -o '[a-f0-9]\{7\}' |
+            xargs -I % sh -c 'git show % --color' | cat
+}
 
 # ftags - search ctags
 ftags() {
@@ -283,9 +308,9 @@ ftpane() {
 # e - open 'frecency' files in $VISUAL editor
 e() {
     local files
-    files=$(fasd -fl |\
+    files=$(fasd -fl |
                 fzf-tmux --tac --reverse -1\
-                --no-sort  --multi --query "$*" |\
+                --no-sort  --multi --query "$*" |
                     grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
 }
@@ -293,9 +318,9 @@ e() {
 # _zz - selectable cd to frecency directory
 _zz() {
     local dir
-    dir=$(fasd -dl |\
+    dir=$(fasd -dl |
             fzf-tmux --tac --reverse -1\
-            --no-sort --no-multi --query "$*" |\
+            --no-sort --no-multi --query "$*" |
                grep -o '/.*')
     [ $dir ] && cd $dir
 }
