@@ -90,7 +90,7 @@ _fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzy)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf +m)
   cd "$DIR"
 }
 
@@ -103,9 +103,8 @@ _cdf() {
 # _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g' |
-        fzf-tmux --reverse -1 --no-sort --no-multi --query "$*")
-    [ $dir ] && cd $dir
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")
+    [ $dir ] && cd $dir  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
 }
 
 # utility function used to run the command in the shell
@@ -229,7 +228,7 @@ fzf-gitlog-widget() {
     --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
     --date=short --color=always"
 
-    fzf_cmd="fzf --ansi --reverse --no-sort --tiebreak=index\
+    fzf_cmd="fzf-tmux --ansi --reverse --no-sort --tiebreak=index\
     --bind=ctrl-x:toggle-sort\
     --bind \"ctrl-m:execute: (grep -o '[a-f0-9]\{7\}' | head -1 |
         xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
@@ -257,7 +256,7 @@ fzf-gitlog-multi-widget() {
     --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
     --date=short --color=always"
 
-    fzf_cmd="fzf --multi --ansi --reverse --no-sort --tiebreak=index\
+    fzf_cmd="fzf --height 100% --multi --ansi --reverse --no-sort --tiebreak=index\
     --bind=ctrl-x:toggle-sort"
 
     eval "$git_cmd | $fzf_cmd" |
@@ -310,8 +309,8 @@ ftpane() {
 e() {
     local files
     files=$(fasd -fl |
-                fzf-tmux --tac --reverse -1\
-                --no-sort  --multi --query "$*" |
+                fzf --tac --reverse -1 --no-sort  --multi --tiebreak=index\
+                --bind=ctrl-x:toggle-sort --query "$*" |
                     grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
 }
@@ -320,8 +319,8 @@ e() {
 _zz() {
     local dir
     dir=$(fasd -dl |
-            fzf-tmux --tac --reverse -1\
-            --no-sort --no-multi --query "$*" |
+            fzf --tac --reverse -1 --no-sort --no-multi --tiebreak=index\
+            --bind=ctrl-x:toggle-sort --query "$*" |
                grep -o '/.*')
     [ $dir ] && cd $dir
 }
