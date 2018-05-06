@@ -1,12 +1,75 @@
 fzf-extras
 ==========
+# Installation
+## Use zplug
+If you use [zplug](https://github.com/zplug/zplug), write on your .zshrc
 
-Additional key bindings for fzf, primarily Bash.
+```
+zplug "u1and0/fzf-extras",\
+    on:"clvv/fasd",\
+    use:"fzf*"
+# Recomend options
+alias zz='zd -z $*'
+alias gz='fzf-gitlog-widget'
+alias gx='fzf-gitlog-multi-widget'
+```
+
+...and reload shell `$SHELL -l`
+
+
+## Use git
+Or from my github repository
+
+```
+git clone https://github.com/u1and0/fzf-extras
+cd ./fzf-extras
+source fzf-extra.sh
+source fzf-extra.zsh
+```
+
+# Dependency
+* [clvv/fasd](https://github.com/clvv/fasd)
+* [junegunn/fzf-bin](https://github.com/junegunn/fzf)
+* [tmux/tmux](https://github.com/tmux/tmux)
+
+
+## Archlinux
+Use pacman on archlinux OS
+
+```
+pacman -S fasd fzf tmux
+```
+
+
+## zplug
+Or use [zplug](https://github.com/zplug/zplug)
+
+```
+# fasd
+zplug "clvv/fasd", as:command, use:fasd
+
+# fzf
+zplug "junegunn/fzf-bin",\
+    as:command,\
+    from:gh-r,\
+    rename-to:"fzf",\
+    hook-load:"source $ZPLUG_REPOS/junegunn/fzf/shell/key-bindings.zsh;\
+                source $ZPLUG_REPOS/junegunn/fzf/shell/completion.zsh"
+# Recomend options
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_OPTS='--ansi --height 40% --reverse --no-border'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# tmux
+# I don't know how... please tell me anyone
+```
+
+
+# Additional key bindings for fzf, primarily Bash.
 
 bash cmdline         | description
 ---                  | ---
-
-`zd`                 | cd into selected directory with options
+`zd`                 | 'fuzzy-finder' + 'cd' = 'zd'
                      | The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
 `_fd`                | cd into selected directory
 `_fda`               | cd into selected directory, including hidden directories
@@ -53,6 +116,9 @@ See Also
 --------
 
 - [DanielFGray/fzf-scripts](https://github.com/DanielFGray/fzf-scripts)
+- [clvv/fasd](https://github.com/clvv/fasd)
+- [junegunn/fzf-bin](https://github.com/junegunn/fzf)
+- [tmux/tmux](https://github.com/tmux/tmux)
 
 
 License
