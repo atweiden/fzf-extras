@@ -309,8 +309,8 @@ ftpane() {
 e() {
     local files
     files=$(fasd -fl |
-                fzf-tmux --tac --reverse -1\
-                --no-sort  --multi --query "$*" |
+                fzf --tac --reverse -1 --no-sort  --multi --tiebreak=index\
+                --bind=ctrl-x:toggle-sort --query "$*" |
                     grep -o "/.*")
     [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
 }
@@ -319,8 +319,8 @@ e() {
 _zz() {
     local dir
     dir=$(fasd -dl |
-            fzf-tmux --tac --reverse -1\
-            --no-sort --no-multi --query "$*" |
+            fzf --tac --reverse -1 --no-sort --no-multi --tiebreak=index\
+            --bind=ctrl-x:toggle-sort --query "$*" |
                grep -o '/.*')
     [ $dir ] && cd $dir
 }
