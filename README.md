@@ -69,7 +69,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 bash cmdline         | description
 ---                  | ---
-`zd`                 | 'fuzzy-finder' + 'cd' = 'zd' Super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+`zd`                 | 'fuzzy-finder' + 'cd' = 'zd', The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
 `_fd`                | cd into selected directory
 `_fda`               | cd into selected directory, including hidden directories
 `_fdr`               | cd into selected parent directory
@@ -95,13 +95,12 @@ bash cmdline         | description
 `v`                  | Open files in `~/.viminfo`
 `runcmd`             | Utility function used to run the command in the shell
 `writecmd`           | Utility function used to write the command in the shell
-`e`                  | open 'frecency' files in $VISUAL editor
+`e`                  | Open 'frecency' files in $VISUAL editor
 
 
 zsh cmdline      | description
 ---              | ---
 <kbd>Alt-i</kbd> | Paste the selected entry from `locate` output into the command line
-<kbd>Alt-r</kbd> | Fuzzy History Search
 
 
 Sources
