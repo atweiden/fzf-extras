@@ -90,7 +90,7 @@ _fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzy)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf +m)
   cd "$DIR"
 }
 
