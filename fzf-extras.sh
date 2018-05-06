@@ -228,7 +228,7 @@ fzf-gitlog-widget() {
     --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
     --date=short --color=always"
 
-    fzf_cmd="fzf --height 100% --ansi --reverse --no-sort --tiebreak=index\
+    fzf_cmd="fzf-tmux --ansi --reverse --no-sort --tiebreak=index\
     --bind=ctrl-x:toggle-sort\
     --bind \"ctrl-m:execute: (grep -o '[a-f0-9]\{7\}' | head -1 |
         xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
