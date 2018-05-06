@@ -103,9 +103,8 @@ _cdf() {
 # _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g' |
-        fzf-tmux --reverse -1 --no-sort --no-multi --query "$*")
-    [ $dir ] && cd $dir
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")
+    [ $dir ] && cd $dir  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
 }
 
 # utility function used to run the command in the shell
