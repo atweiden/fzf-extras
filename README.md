@@ -54,7 +54,7 @@ zplug "junegunn/fzf-bin",\
     from:gh-r,\
     rename-to:"fzf",\
     hook-load:"source $ZPLUG_REPOS/junegunn/fzf/shell/key-bindings.zsh;\
-                source $ZPLUG_REPOS/junegunn/fzf/shell/completion.zsh"
+               source $ZPLUG_REPOS/junegunn/fzf/shell/completion.zsh"
 # Recomend options
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_DEFAULT_OPTS='--ansi --height 40% --reverse --no-border'
@@ -69,8 +69,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 bash cmdline         | description
 ---                  | ---
-`zd`                 | 'fuzzy-finder' + 'cd' = 'zd'
-                     | The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+`zd`                 | 'fuzzy-finder' + 'cd' = 'zd' Super function of _fd, _fda, _fdr, _fst, _cdf, _zz
 `_fd`                | cd into selected directory
 `_fda`               | cd into selected directory, including hidden directories
 `_fdr`               | cd into selected parent directory
@@ -119,6 +118,8 @@ See Also
 - [clvv/fasd](https://github.com/clvv/fasd)
 - [junegunn/fzf-bin](https://github.com/junegunn/fzf)
 - [tmux/tmux](https://github.com/tmux/tmux)
+- [b4b4r07/enhancd](https://github.com/b4b4r07/enhancd)
+- [rupa/z](https://github.com/rupa/z)
 
 
 License
