@@ -223,9 +223,14 @@ fstash() {
 }
 
 # git log browser
+# %s: comment
+# %d: branch/tag
+# %h: hash
+# %cd: date
+# %an: author
 fzf-gitlog-widget() {
     git_cmd="git log --all --graph --date-order\
-    --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
+    --format=format:'%C(auto)%s %d %h %C(cyan)%cd %C(bold black)%an %C(auto)'\
     --date=short --color=always"
 
     fzf_cmd="fzf --height=100% --ansi --reverse --no-sort --tiebreak=index\
@@ -253,7 +258,7 @@ fzf-gitlog-widget() {
 #
 fzf-gitlog-multi-widget() {
     git_cmd="git log --all --graph --date-order\
-    --format=format:'%C(yellow)%h %C(reset)%s %C(bold black)%cd %C(auto)%d %C(reset)'\
+    --format=format:'%C(auto)%s %d %h %C(cyan)%cd %C(bold black)%an %C(auto)'\
     --date=short --color=always"
 
     fzf_cmd="fzf --height 100% --multi --ansi --reverse --no-sort --tiebreak=index\
