@@ -20,22 +20,67 @@ fo() {
   fi
 }
 
-# fd - cd to selected directory
-fd() {
+
+# zd - cd into selected directory with options
+# The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+zd() {
+    usage() {
+        echo "usage: zd [OPTIONS]"
+        echo "\tzd: cd to selected options below"
+        echo "OPTIONS:"
+        echo "\t-d [path]: Directory (default)"
+        echo "\t-a [path]: Directory included hidden"
+        echo "\t-r [path]: Parent directory"
+        echo "\t-s [query]: Directory from stack"
+        echo "\t-f [query]: Directory of the selected file"
+        echo "\t-z [query]: Frecency directory"
+        echo "\t-h: Print this usage"
+    }
+
+    # No arg
+    if [ ! $1 ]; then
+        _fd
+    # Args is '..' or '-' or [path]
+    elif [ $1 = '..' ]; then
+        shift; _fdr $1
+    elif [ $1 = '-' ]; then
+        shift; _fst "$*"
+    elif [ ${1:0:1} != '-' ]; then  # first string is not -
+        _fd $(realpath $1)
+    # Args is start from '-'
+    else
+        while getopts darfszh OPT; do
+            case $OPT in
+                d) shift; _fd  $1; return 0;;
+                a) shift; _fda $1; return 0;;
+                r) shift; _fdr $1; return 0;;
+                s) shift; _fst "$*"; return 0;;
+                f) shift; _cdf "$*"; return 0;;
+                z) shift; _zz  "$*"; return 0;;
+                h) usage; return 0;;
+                *) usage; return 1;;
+            esac
+        done
+    fi
+}
+
+
+# _fd - cd to selected directory
+_fd() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune \
                   -o -type d -print 2> /dev/null | fzf +m) &&
   cd "$dir"
 }
 
-# fda - including hidden directories
-fda() {
+# _fda - including hidden directories
+_fda() {
   local dir
   dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
 }
 
-# fdr - cd to selected parent directory
-fdr() {
+# _fdr - cd to selected parent directory
+_fdr() {
   local declare dirs=()
   get_parent_dirs() {
     if [[ -d "${1}" ]]; then dirs+=("$1"); else return; fi
@@ -45,15 +90,21 @@ fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf-tmux --tac)
+  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf +m)
   cd "$DIR"
 }
 
-# cdf - cd into the directory of the selected file
-cdf() {
+# _cdf - cd into the directory of the selected file
+_cdf() {
    local file
-   local dir
-   file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+   file=$(fzf +m -q "$*") && cd $(dirname "$file")
+}
+
+# _fst - cd into the directory from stack
+_fst() {
+    local dir
+    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")
+    [ $dir ] && cd $dir  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
 }
 
 # utility function used to run the command in the shell
@@ -171,6 +222,53 @@ fstash() {
   done
 }
 
+# git log browser
+# %s: comment
+# %d: branch/tag
+# %h: hash
+# %cd: date
+# %an: author
+fzf-gitlog-widget() {
+    git_cmd="git log --all --graph --date-order\
+    --format=format:'%C(auto)%s %d %h %C(cyan)%cd %C(bold black)%an %C(auto)'\
+    --date=short --color=always"
+
+    fzf_cmd="fzf --height=100% --ansi --reverse --no-sort --tiebreak=index\
+    --bind=ctrl-x:toggle-sort\
+    --bind \"ctrl-m:execute: (grep -o '[a-f0-9]\{7\}' | head -1 |
+        xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
+        {}
+    FZF-EOF\""
+
+    eval "$git_cmd | $fzf_cmd"
+}
+
+# Multi-Selectable git show
+#
+# 1. Show git log --graph
+# 2. Fuzzy Search
+# 3. Select Tab key
+# 4. Enter, then push selected commit message into STDOUT
+#
+# You can use pipe like below
+# ```
+# fzf-gitlog-multi-widget | grep date  # Show only date
+# fzf-gitlog-multi-widget | less -P 'hoge'  # Commit messege highlight 'hoge'
+# ```
+#
+fzf-gitlog-multi-widget() {
+    git_cmd="git log --all --graph --date-order\
+    --format=format:'%C(auto)%s %d %h %C(cyan)%cd %C(bold black)%an %C(auto)'\
+    --date=short --color=always"
+
+    fzf_cmd="fzf --height 100% --multi --ansi --reverse --no-sort --tiebreak=index\
+    --bind=ctrl-x:toggle-sort"
+
+    eval "$git_cmd | $fzf_cmd" |
+        grep -o '[a-f0-9]\{7\}' |
+            xargs -I % sh -c 'git show % --color' | cat
+}
+
 # ftags - search ctags
 ftags() {
   local line
@@ -212,11 +310,22 @@ ftpane() {
   fi
 }
 
-# v - open files in ~/.viminfo
-v() {
-  local files
-  files=$(grep '^>' ~/.viminfo | cut -c3- |
-          while read line; do
-            [ -f "${line/\~/$HOME}" ] && echo "$line"
-          done | fzf-tmux -d -m -q "$*" -1) && vim ${files//\~/$HOME}
+# e - open 'frecency' files in $VISUAL editor
+e() {
+    local files
+    files=$(fasd -fl |
+                fzf --tac --reverse -1 --no-sort  --multi --tiebreak=index\
+                --bind=ctrl-x:toggle-sort --query "$*" |
+                    grep -o "/.*")
+    [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
+}
+
+# _zz - selectable cd to frecency directory
+_zz() {
+    local dir
+    dir=$(fasd -dl |
+            fzf --tac --reverse -1 --no-sort --no-multi --tiebreak=index\
+            --bind=ctrl-x:toggle-sort --query "$*" |
+               grep -o '/.*')
+    [ $dir ] && cd $dir
 }
