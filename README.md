@@ -21,7 +21,7 @@ bash cmdline              | description
 `fh`                      | Select line from history, repeat without editing
 `fhe`                     | Select line from history, leave for editing
 `fkill`                   | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
-`fo`                      | Equivalent to `fe`, but opens it with `xdg-open` if you press <kbd>Ctrl+O</kbd>
+`fo`                      | Equivalent to `fe`, but opens it with `$OPENER` (default: `xdg-open`) if you press <kbd>Ctrl+O</kbd>
 `fs [FUZZY PATTERN]`      | Select tmux session
 `fshow`                   | Git commit browser
 `fstash`                  | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
@@ -54,6 +54,28 @@ Install [aur/fzf-extras](https://aur.archlinux.org/packages/fzf-extras).
 
 ```sh
 git clone https://github.com/atweiden/fzf-extras ~/.fzf-extras
+```
+
+### Configure fzf-extras
+
+To make use of function `fo`, consider setting the `$OPENER` environment
+variable. If `$OPENER` is unset, `fo` will attempt to open files with
+`xdg-open` when pressing <kbd>Ctrl+O</kbd>.
+
+**Arch Linux**
+
+```sh
+cat >> ~/.bashrc <<'EOF'
+OPENER=mimeo
+EOF
+```
+
+**MacOS**
+
+```sh
+cat >> ~/.bashrc <<'EOF'
+OPENER=open
+EOF
 ```
 
 ### Source fzf-extras

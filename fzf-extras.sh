@@ -8,15 +8,15 @@ fe() {
 }
 
 # fo - Modified version of fe() where you can press
-#   - CTRL-O to open with `xdg-open` command,
-#   - CTRL-E or Enter key to open with the $EDITOR
+#   - CTRL-O to open with $OPENER,
+#   - CTRL-E or Enter key to open with $EDITOR
 fo() {
   local IFS=$'\n'
   local out=($(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e))
   local key=$(head -1 <<< "$out")
   local file=$(head -2 <<< "$out" | tail -1)
   if [ -n "$file" ]; then
-    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
+    [ "$key" = ctrl-o ] && ${OPENER:-xdg-open} "$file" || ${EDITOR:-vim} "$file"
   fi
 }
 
