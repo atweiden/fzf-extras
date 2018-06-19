@@ -128,7 +128,7 @@ fdr() {
 cdf() {
   local file
   file="$(fzf +m -q "$*")"
-  [[ -f "$file" ]] && (cd "$(dirname "$file")" || exit)
+  cd "$(dirname "$file")" || exit
 }
 
 # fst - cd into the directory from stack
@@ -136,7 +136,7 @@ fst() {
   local dir
   dir="$(echo "$dirstack" | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")"
   # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
-  [[ -d "$dir" ]] && (cd "$dir" || exit)
+  cd "$dir" || exit
 }
 
 # runcmd - utility function used to run the command in the shell
