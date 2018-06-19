@@ -101,7 +101,7 @@ fd() {
     find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2> /dev/null \
       | fzf +m
   )" || return
-  cd "$dir" || exit
+  cd "$dir" || return
 }
 
 # fda - including hidden directories
@@ -111,7 +111,7 @@ fda() {
     find "${1:-.}" -type d 2> /dev/null \
       | fzf +m
   )" || return
-  cd "$dir" || exit
+  cd "$dir" || return
 }
 
 # fdr - cd to selected parent directory
@@ -133,14 +133,14 @@ fdr() {
       | fzf +m
   )" || return
 
-  cd "$DIR" || exit
+  cd "$DIR" || return
 }
 
 # cdf - cd into the directory of the selected file
 cdf() {
   local file
   file="$(fzf +m -q "$*")"
-  cd "$(dirname "$file")" || exit
+  cd "$(dirname "$file")" || return
 }
 
 # fst - cd into the directory from stack
@@ -152,7 +152,7 @@ fst() {
       | fzf +s +m -1 -q "$*"
   )"
   # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
-  cd "$dir" || exit
+  cd "$dir" || return
 }
 
 # runcmd - utility function used to run the command in the shell
@@ -563,5 +563,5 @@ zz() {
       | grep -o '/.*'
   )" || return
 
-  cd "$dir" || exit
+  cd "$dir" || return
 }
