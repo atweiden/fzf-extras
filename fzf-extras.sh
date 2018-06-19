@@ -7,7 +7,12 @@ fe() {
   local IFS=$'\n'
   local files=()
   files=(
-    "$(fzf-tmux --query="$1" --multi --select-1 --exit-0)"
+    "$(fzf-tmux \
+          --query="$1" \
+          --multi \
+          --select-1 \
+          --exit-0
+    )"
   ) || return
   "${EDITOR:-vim}" "${files[@]}"
 }
@@ -21,7 +26,14 @@ fo() {
   local key
   local file
 
-  out=("$(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)")
+  out=(
+    "$(
+        fzf-tmux \
+          --query="$1" \
+          --exit-0 \
+          --expect=ctrl-o,ctrl-e
+    )"
+  )
   key="$(head -1 <<< "${out[@]}")"
   file="$(head -2 <<< "${out[@]}" | tail -1)" || return
 
@@ -134,7 +146,11 @@ cdf() {
 # fst - cd into the directory from stack
 fst() {
   local dir
-  dir="$(echo "$dirstack" | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")"
+  dir="$(
+    echo "$dirstack" \
+      | sed -e 's/\s/\n/g' \
+      | fzf +s +m -1 -q "$*"
+  )"
   # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
   cd "$dir" || exit
 }
@@ -241,7 +257,8 @@ fco() {
           --ansi \
           +m \
           -d '\t' \
-          -n 2 -1 \
+          -n 2 \
+          -1 \
           -q "$*"
   )" || return
 
@@ -536,7 +553,8 @@ zz() {
     fasd -dl \
       | fzf \
           --tac \
-          --reverse -1 \
+          --reverse \
+          --select-1 \
           --no-sort \
           --no-multi \
           --tiebreak=index \
