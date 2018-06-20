@@ -6,39 +6,73 @@ Additional key bindings for fzf, primarily Bash.
 Usage
 -----
 
+**directory**
+
 bash cmdline              | description
 ---                       | ---
-`cdf`                     | cd into the directory of the selected file
-`e`                       | Open 'frecency' files in `$VISUAL` editor
+`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `_fd`, `_fda`, `_fdr`, `_fst`, `_cdf`, `_zz`
+`_cdf`                    | cd into the directory of the selected file
+`_fd`                     | cd into selected directory
+`_fda`                    | cd into selected directory, including hidden directories
+`_fdr`                    | cd into selected parent directory
+`_fst`                    | cd into the directory from stack
+`_zz`                     | Selectable cd to 'frecency' directory
+
+**file**
+
+bash cmdline              | description
+---                       | ---
+`e`                       | Open 'frecency' files with `$VISUAL` editor
+`fe [FUZZY PATTERN]`      | Open selected file with `$EDITOR`
+`fo`                      | Equivalent to `fe`, but opens file with `$OPENER` (default: `xdg-open`) if you press <kbd>Ctrl+O</kbd>
+`v`                       | Open selected files from `~/.viminfo` with `$EDITOR`
+
+**git**
+
+bash cmdline              | description
+---                       | ---
 `fbr`                     | Checkout Git branch (including remote branches)
 `fco`                     | Checkout Git branch/tag
 `fcoc`                    | Checkout Git commit
 `fcs`                     | Get Git commit SHA hash
-`fd`                      | cd into selected directory
-`fda`                     | cd into selected directory, including hidden directories
-`fdr`                     | cd into selected parent directory
-`fe [FUZZY PATTERN]`      | Open the selected file with the default editor
-`fh`                      | Select line from history, repeat without editing
-`fhe`                     | Select line from history, leave for editing
-`fkill`                   | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
-`fo`                      | Equivalent to `fe`, but opens it with `$OPENER` (default: `xdg-open`) if you press <kbd>Ctrl+O</kbd>
-`fs [FUZZY PATTERN]`      | Select tmux session
 `fshow`                   | Git commit browser
 `fstash`                  | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
-`fst`                     | cd into the directory from stack
-`ftags`                   | Search ctags
-`ftpane`                  | Switch pane
 `fzf-gitlog-multi-widget` | Multi-selectable `git show`
 `fzf-gitlog-widget`       | Git log browser
-`v`                       | Open files in `~/.viminfo`
-`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `fd`, `fda`, `fdr`, `fst`, `cdf`, `zz`
-`zz`                      | Selectable cd to 'frecency' directory
+
+**history**
+
+bash cmdline              | description
+---                       | ---
+`fh`                      | Select line from history, repeat without editing
+`fhe`                     | Select line from history, leave for editing
 `runcmd`                  | Utility function used to run the command in the shell
 `writecmd`                | Utility function used to write the command in the shell
 
-zsh cmdline      | description
----              | ---
-<kbd>Alt-i</kbd> | Paste the selected entry from `locate` output into the command line
+**pid**
+
+bash cmdline              | description
+---                       | ---
+`fkill`                   | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
+
+**tags**
+
+bash cmdline              | description
+---                       | ---
+`ftags`                   | Search ctags
+
+**tmux**
+
+bash cmdline              | description
+---                       | ---
+`fs [FUZZY PATTERN]`      | Select tmux session
+`ftpane`                  | Switch pane
+
+**zsh**
+
+zsh cmdline               | description
+---                       | ---
+<kbd>Alt-i</kbd>          | Paste the selected entry from `locate` output into the command line
 
 
 Installation
@@ -114,6 +148,7 @@ Dependencies
 - [fasd](https://github.com/clvv/fasd)
 - [git](https://git-scm.com/)
 - [mlocate](https://pagure.io/mlocate)
+- [vim](https://www.vim.org/)
 - [xdg-utils](https://www.freedesktop.org/wiki/Software/xdg-utils/)
 - [zsh](https://www.zsh.org/)
 

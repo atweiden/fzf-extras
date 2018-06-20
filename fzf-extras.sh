@@ -1,5 +1,171 @@
 #!/bin/bash
 
+# -----------------------------------------------------------------------------
+# directory
+# -----------------------------------------------------------------------------
+
+# _fd - cd to selected directory
+_fd() {
+  local dir
+  dir="$(
+    find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2> /dev/null \
+      | fzf +m
+  )" || return
+  cd "$dir" || return
+}
+
+# _fda - including hidden directories
+_fda() {
+  local dir
+  dir="$(
+    find "${1:-.}" -type d 2> /dev/null \
+      | fzf +m
+  )" || return
+  cd "$dir" || return
+}
+
+# _fdr - cd to selected parent directory
+_fdr() {
+  local dirs=()
+  local parent_dir
+
+  get_parent_dirs() {
+    if [[ -d "$1" ]]; then dirs+=("$1"); else return; fi
+    if [[ "$1" == '/' ]]; then
+      for _dir in "${dirs[@]}"; do echo "$_dir"; done
+    else
+      get_parent_dirs "$(dirname "$1")"
+    fi
+  }
+
+  parent_dir="$(
+    get_parent_dirs "$(realpath "${1:-$PWD}")" \
+      | fzf +m
+  )" || return
+
+  cd "$parent_dir" || return
+}
+
+# _fst - cd into the directory from stack
+_fst() {
+  local dir
+  dir="$(
+    dirs \
+      | sed 's#\s#\n#g' \
+      | uniq \
+      | sed "s#^~#$HOME#" \
+      | fzf +s +m -1 -q "$*"
+  )"
+  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
+  if [[ -d "$dir" ]]; then
+    cd "$dir" || return
+  fi
+}
+
+# _cdf - cd into the directory of the selected file
+_cdf() {
+  local file
+  file="$(fzf +m -q "$*")"
+  cd "$(dirname "$file")" || return
+}
+
+# _zz - selectable cd to frecency directory
+_zz() {
+  local dir
+
+  dir="$(
+    fasd -dl \
+      | fzf \
+          --tac \
+          --reverse \
+          --select-1 \
+          --no-sort \
+          --no-multi \
+          --tiebreak=index \
+          --bind=ctrl-x:toggle-sort \
+          --query "$*" \
+      | grep -o '/.*'
+  )" || return
+
+  cd "$dir" || return
+}
+
+# zd - cd into selected directory with options
+# The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+zd() {
+  read -r -d '' helptext <<EOF
+usage: zd [OPTIONS]
+  zd: cd to selected options below
+OPTIONS:
+  -d [path]: Directory (default)
+  -a [path]: Directory included hidden
+  -r [path]: Parent directory
+  -s [query]: Directory from stack
+  -f [query]: Directory of the selected file
+  -z [query]: Frecency directory
+  -h: Print this usage
+EOF
+
+  usage() {
+    echo "$helptext"
+  }
+
+  if [[ -z "$1" ]]; then
+    # no arg
+    _fd
+  elif [[ "$1" == '..' ]]; then
+    # arg is '..'
+    shift
+    _fdr "$1"
+  elif [[ "$1" == '-' ]]; then
+    # arg is '-'
+    shift
+    _fst "$*"
+  elif [[ "${1:0:1}" != '-' ]]; then
+    # first string is not -
+    _fd "$(realpath "$1")"
+  else
+    # args is start from '-'
+    while getopts darfszh OPT; do
+      case "$OPT" in
+        d) shift; _fd  "$1";;
+        a) shift; _fda "$1";;
+        r) shift; _fdr "$1";;
+        s) shift; _fst "$*";;
+        f) shift; _cdf "$*";;
+        z) shift; _zz  "$*";;
+        h) usage; return 0;;
+        *) usage; return 1;;
+      esac
+    done
+  fi
+}
+
+
+# -----------------------------------------------------------------------------
+# file
+# -----------------------------------------------------------------------------
+
+# e - open 'frecency' files in $VISUAL editor
+e() {
+  local files
+
+  files="$(
+    fasd -fl \
+      | fzf \
+          --tac \
+          --reverse -1 \
+          --no-sort \
+          --multi \
+          --tiebreak=index \
+          --bind=ctrl-x:toggle-sort \
+          --query "$*" \
+      | grep -o "/.*"
+  )" || echo 'No file selected'; return
+
+  "${VISUAL:-vim}" "$files"
+}
+
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
@@ -44,156 +210,22 @@ fo() {
   fi
 }
 
-# zd - cd into selected directory with options
-# The super function of fd, fda, fdr, fst, cdf, zz
-zd() {
-  read -r -d '' helptext <<EOF
-usage: zd [OPTIONS]
-  zd: cd to selected options below
-OPTIONS:
-  -d [path]: Directory (default)
-  -a [path]: Directory included hidden
-  -r [path]: Parent directory
-  -s [query]: Directory from stack
-  -f [query]: Directory of the selected file
-  -z [query]: Frecency directory
-  -h: Print this usage
-EOF
-
-  usage() {
-    echo "$helptext"
-  }
-
-  if [[ -z "$1" ]]; then
-    # no arg
-    fd
-  elif [[ "$1" == '..' ]]; then
-    # args is '..' or '-' or [path]
-    shift
-    fdr "$1"
-  elif [[ "$1" == '-' ]]; then
-    shift
-    fst "$*"
-  elif [[ "${1:0:1}" != '-' ]]; then
-    # first string is not -
-    fd "$(realpath "$1")"
-  else
-    # args is start from '-'
-    while getopts darfszh OPT; do
-      case "$OPT" in
-        d) shift; fd  "$1"; return 0;;
-        a) shift; fda "$1"; return 0;;
-        r) shift; fdr "$1"; return 0;;
-        s) shift; fst "$*"; return 0;;
-        f) shift; cdf "$*"; return 0;;
-        z) shift; zz  "$*"; return 0;;
-        h) usage; return 0;;
-        *) usage; return 1;;
-      esac
-    done
-  fi
-}
-
-# fd - cd to selected directory
-fd() {
-  local dir
-  dir="$(
-    find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2> /dev/null \
-      | fzf +m
-  )" || return
-  cd "$dir" || return
-}
-
-# fda - including hidden directories
-fda() {
-  local dir
-  dir="$(
-    find "${1:-.}" -type d 2> /dev/null \
-      | fzf +m
-  )" || return
-  cd "$dir" || return
-}
-
-# fdr - cd to selected parent directory
-fdr() {
-  local dirs=()
-  local DIR
-
-  get_parent_dirs() {
-    if [[ -d "$1" ]]; then dirs+=("$1"); else return; fi
-    if [[ "$1" == '/' ]]; then
-      for _dir in "${dirs[@]}"; do echo "$_dir"; done
-    else
-      get_parent_dirs "$(dirname "$1")"
-    fi
-  }
-
-  DIR="$(
-    get_parent_dirs "$(realpath "${1:-$PWD}")" \
-      | fzf +m
-  )" || return
-
-  cd "$DIR" || return
-}
-
-# cdf - cd into the directory of the selected file
-cdf() {
-  local file
-  file="$(fzf +m -q "$*")"
-  cd "$(dirname "$file")" || return
-}
-
-# fst - cd into the directory from stack
-fst() {
-  local dir
-  dir="$(
-    echo "$dirstack" \
-      | sed -e 's/\s/\n/g' \
-      | fzf +s +m -1 -q "$*"
+# v - open files in ~/.viminfo
+v() {
+  local files
+  files="$(
+    grep '^>' "$HOME/.viminfo" \
+      | cut -c3- \
+      | while read line; do [[ -f "${line/\~/$HOME}" ]] && echo "$line"; done \
+      | fzf -m -0 -1 -q "$*"
   )"
-  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
-  cd "$dir" || return
+  "${EDITOR:-vim}" "${files/\~/$HOME}"
 }
 
-# runcmd - utility function used to run the command in the shell
-runcmd() {
-  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, <>'
-}
 
-# fh - repeat history
-fh() {
-  ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) \
-    | fzf +s --tac \
-    | sed -re 's/^\s*[0-9]+\s*//' \
-    | runcmd
-}
-
-# writecmd - utility function used to write the command in the shell
-writecmd() {
-  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, do { chomp($_ = <>); $_ }'
-}
-
-# fhe - repeat history edit
-fhe() {
-  ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) \
-    | fzf +s --tac \
-    | sed -re 's/^\s*[0-9]+\s*//' \
-    | writecmd
-}
-
-# fkill - kill process
-fkill() {
-  local pid
-
-  pid="$(
-    ps -ef \
-      | sed 1d \
-      | fzf -m \
-      | awk '{print $2}'
-  )" || return
-
-  kill -"${1:-9}" "$pid"
-}
+# -----------------------------------------------------------------------------
+# git
+# -----------------------------------------------------------------------------
 
 # fbr - checkout git branch (including remote branches)
 #   - sorted by most recent commit
@@ -282,29 +314,6 @@ fcoc() {
   git checkout "$(echo "$commit" | sed "s/ .*//")"
 }
 
-# fshow - git commit browser
-fshow() {
-  local execute
-
-  execute="grep -o \"[a-f0-9]\{7\}\" \
-    | head -1 \
-    | xargs -I % sh -c 'git show --color=always % | less -R'"
-
-  git log \
-    --graph \
-    --color=always \
-    --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" \
-    | fzf \
-        --ansi \
-        --no-sort \
-        --reverse \
-        --tiebreak=index \
-        --bind=ctrl-s:toggle-sort \
-        --bind "ctrl-m:execute: ($execute) <<'FZF-EOF'
-  {}
-FZF-EOF"
-}
-
 # fcs - get git commit sha
 # example usage: git rebase -i "$(fcs)"
 fcs() {
@@ -331,6 +340,29 @@ fcs() {
   )" || return
 
   echo -n "$(echo "$commit" | sed "s/ .*//")"
+}
+
+# fshow - git commit browser
+fshow() {
+  local execute
+
+  execute="grep -o \"[a-f0-9]\{7\}\" \
+    | head -1 \
+    | xargs -I % sh -c 'git show --color=always % | less -R'"
+
+  git log \
+    --graph \
+    --color=always \
+    --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" \
+    | fzf \
+        --ansi \
+        --no-sort \
+        --reverse \
+        --tiebreak=index \
+        --bind=ctrl-s:toggle-sort \
+        --bind "ctrl-m:execute: ($execute) <<'FZF-EOF'
+  {}
+FZF-EOF"
 }
 
 # fstash - easier way to deal with stashes
@@ -371,16 +403,16 @@ fstash() {
 }
 
 # fzf-gitlog-widget - git log browser
-# %s: comment
-# %d: branch/tag
-# %h: hash
-# %cd: date
-# %an: author
 fzf-gitlog-widget() {
   local git_cmd
   local execute
   local fzf_cmd
 
+  # %s: comment
+  # %d: branch/tag
+  # %h: hash
+  # %cd: date
+  # %an: author
   git_cmd='git log \
     --all \
     --graph \
@@ -409,7 +441,7 @@ fzf-gitlog-widget() {
 
 # fzf-gitlog-multi-widget - multi-selectable git show
 #
-# 1. Show git log --graph
+# 1. Show `git log --graph`
 # 2. Fuzzy Search
 # 3. Select Tab key
 # 4. Enter, then push selected commit message into STDOUT
@@ -449,6 +481,61 @@ fzf-gitlog-multi-widget() {
     | cat
 }
 
+
+# -----------------------------------------------------------------------------
+# history
+# -----------------------------------------------------------------------------
+
+# runcmd - utility function used to run the command in the shell
+runcmd() {
+  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, <>'
+}
+
+# fh - repeat history
+fh() {
+  ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) \
+    | fzf +s --tac \
+    | sed -re 's/^\s*[0-9]+\s*//' \
+    | runcmd
+}
+
+# writecmd - utility function used to write the command in the shell
+writecmd() {
+  perl -e 'ioctl STDOUT, 0x5412, $_ for split //, do { chomp($_ = <>); $_ }'
+}
+
+# fhe - repeat history edit
+fhe() {
+  ([[ -n "$ZSH_NAME" ]] && fc -l 1 || history) \
+    | fzf +s --tac \
+    | sed -re 's/^\s*[0-9]+\s*//' \
+    | writecmd
+}
+
+
+# -----------------------------------------------------------------------------
+# pid
+# -----------------------------------------------------------------------------
+
+# fkill - kill process
+fkill() {
+  local pid
+
+  pid="$(
+    ps -ef \
+      | sed 1d \
+      | fzf -m \
+      | awk '{print $2}'
+  )" || return
+
+  kill -"${1:-9}" "$pid"
+}
+
+
+# -----------------------------------------------------------------------------
+# tags
+# -----------------------------------------------------------------------------
+
 # ftags - search ctags
 ftags() {
   local line
@@ -465,6 +552,11 @@ ftags() {
     -c 'set nocst' \
     -c "silent tag \"$(cut -f2 <<< "$line")\""
 }
+
+
+# -----------------------------------------------------------------------------
+# tmux
+# -----------------------------------------------------------------------------
 
 # fs [FUZZY PATTERN] - Select selected tmux session
 #   - Bypass fuzzy finder if there's only one match (--select-1)
@@ -525,43 +617,4 @@ ftpane() {
   fi
 }
 
-# e - open 'frecency' files in $VISUAL editor
-e() {
-  local files
-
-  files="$(
-    fasd -fl \
-      | fzf \
-          --tac \
-          --reverse -1 \
-          --no-sort \
-          --multi \
-          --tiebreak=index \
-          --bind=ctrl-x:toggle-sort \
-          --query "$*" \
-      | grep -o "/.*"
-  )" || echo 'No file selected'; return
-
-  "$VISUAL" "$files"
-}
-
-# zz - selectable cd to frecency directory
-zz() {
-  local dir
-
-  dir="$(
-    fasd -dl \
-      | fzf \
-          --tac \
-          --reverse \
-          --select-1 \
-          --no-sort \
-          --no-multi \
-          --tiebreak=index \
-          --bind=ctrl-x:toggle-sort \
-          --query "$*" \
-      | grep -o '/.*'
-  )" || return
-
-  cd "$dir" || return
-}
+# vim: set filetype=sh foldmethod=marker foldlevel=0:
