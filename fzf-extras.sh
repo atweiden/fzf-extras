@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # -----------------------------------------------------------------------------
 # directory
@@ -216,7 +216,9 @@ v() {
   files="$(
     grep '^>' "$HOME/.viminfo" \
       | cut -c3- \
-      | while read line; do [[ -f "${line/\~/$HOME}" ]] && echo "$line"; done \
+      | while read -r line; do
+          [[ -f "${line/\~/$HOME}" ]] && echo "$line"
+        done \
       | fzf -m -0 -1 -q "$*"
   )"
   "${EDITOR:-vim}" "${files/\~/$HOME}"

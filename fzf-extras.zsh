@@ -1,4 +1,5 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
+
 if [[ $- =~ i ]]; then
 
 # ALT-I - Paste the selected entry from locate output into the command line
