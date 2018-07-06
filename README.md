@@ -127,8 +127,8 @@ EOF
 
 ```sh
 cat >> ~/.bashrc <<'EOF'
-[[ -e "$HOME/.fzf-extras/fzf-extras.bash" ]] \
-  && source "$HOME/.fzf-extras/fzf-extras.bash"
+[[ -e "$HOME/.fzf-extras/fzf-extras.sh" ]] \
+  && source "$HOME/.fzf-extras/fzf-extras.sh"
 EOF
 ```
 
