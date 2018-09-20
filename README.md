@@ -1,10 +1,10 @@
-fzf-extras
-==========
+# fzf-extras
 
 Additional key bindings for fzf, primarily Bash.
 
-Usage
------
+## Usage
+
+### Bash
 
 **directory**
 
@@ -68,15 +68,15 @@ bash cmdline              | description
 `fs [FUZZY PATTERN]`      | Select tmux session
 `ftpane`                  | Switch pane
 
-**zsh**
+### Zsh
+
+**file**
 
 zsh cmdline               | description
 ---                       | ---
 <kbd>Alt-i</kbd>          | Paste the selected entry from `locate` output into the command line
 
-
-Installation
-------------
+## Installation
 
 ### Install fzf-extras
 
@@ -117,24 +117,43 @@ EOF
 **Arch Linux**
 
 ```sh
+# bash users only
 cat >> ~/.bashrc <<'EOF'
 [[ -e "/etc/profile.d/fzf-extras.bash" ]] \
   && source /etc/profile.d/fzf-extras.bash
+EOF
+
+# zsh users only
+cat >> ~/.zshrc <<'EOF'
+[[ -e "/etc/profile.d/fzf-extras.zsh" ]] \
+  && source /etc/profile.d/fzf-extras.zsh
 EOF
 ```
 
 **Manual**
 
 ```sh
+# bash users only
 cat >> ~/.bashrc <<'EOF'
 [[ -e "$HOME/.fzf-extras/fzf-extras.sh" ]] \
   && source "$HOME/.fzf-extras/fzf-extras.sh"
 EOF
+
+# zsh users only
+cat >> ~/.zshrc <<'EOF'
+[[ -e "$HOME/.fzf-extras/fzf-extras.zsh" ]] \
+  && source "$HOME/.fzf-extras/fzf-extras.zsh"
+EOF
 ```
 
+Zsh users should not be sourcing `fzf-extras.sh`.
 
-Dependencies
-------------
+The lack of meaningful support for Zsh will be fixed pending suitable
+PRs from Zsh-using contributors. Note it is perfectly acceptable
+to duplicate code from `fzf-extras.sh` into `fzf-extras.zsh`. See:
+https://github.com/atweiden/fzf-extras/issues/12.
+
+## Dependencies
 
 **Required**
 
@@ -152,21 +171,15 @@ Dependencies
 - [xdg-utils](https://www.freedesktop.org/wiki/Software/xdg-utils/)
 - [zsh](https://www.zsh.org/)
 
-
-Sources
--------
+## Sources
 
 - [fzf/wiki](https://github.com/junegunn/fzf/wiki)
 - [junegunn/dotfiles](https://github.com/junegunn/dotfiles)
 
-
-See Also
---------
+## See Also
 
 - [DanielFGray/fzf-scripts](https://github.com/DanielFGray/fzf-scripts)
 
-
-License
--------
+## License
 
 [MIT](LICENSE)
