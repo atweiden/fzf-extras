@@ -157,7 +157,7 @@ https://github.com/atweiden/fzf-extras/issues/12.
 
 **Required**
 
-- [bash](https://www.gnu.org/software/bash/)
+- [bash](https://www.gnu.org/software/bash/) or [zsh](https://www.zsh.org/)
 - [fzf](https://github.com/junegunn/fzf)
 - [tmux](https://github.com/tmux/tmux)
 
@@ -169,7 +169,6 @@ https://github.com/atweiden/fzf-extras/issues/12.
 - [mlocate](https://pagure.io/mlocate)
 - [vim](https://www.vim.org/)
 - [xdg-utils](https://www.freedesktop.org/wiki/Software/xdg-utils/)
-- [zsh](https://www.zsh.org/)
 
 ## Sources
 
