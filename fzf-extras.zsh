@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-if [[ $- =~ i ]]; then
-
 # -----------------------------------------------------------------------------
 # directory
 # -----------------------------------------------------------------------------
@@ -205,8 +203,7 @@ v() {
   "${EDITOR:-vim}" "${files/\~/$HOME}"
 }
 
-
-# ALT-I - Paste the selected entry from locate output into the command line
+# fzf-locate-widget - paste selected entry from locate output into cmdline
 fzf-locate-widget() {
   local selected
   if selected=$(locate / | fzf -q "$LBUFFER"); then
@@ -214,12 +211,8 @@ fzf-locate-widget() {
   fi
   zle redisplay
 }
-zle     -N    fzf-locate-widget
+zle -N fzf-locate-widget
 bindkey '\ei' fzf-locate-widget
-
-fi
-
-
 
 # -----------------------------------------------------------------------------
 # git
@@ -565,4 +558,3 @@ ftpane() {
 }
 
 # vim: set filetype=sh foldmethod=marker foldlevel=0:
-
