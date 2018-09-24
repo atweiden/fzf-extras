@@ -1,14 +1,14 @@
 # fzf-extras
 
-Additional key bindings for fzf, primarily Bash.
+Additional key bindings for fzf.
 
 ## Usage
 
-### Bash
+### Bash / Zsh
 
 **directory**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `_fd`, `_fda`, `_fdr`, `_fst`, `_cdf`, `_zz`
 `_cdf`                    | cd into the directory of the selected file
@@ -20,7 +20,7 @@ bash cmdline              | description
 
 **file**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `e`                       | Open 'frecency' files with `$VISUAL` editor
 `fe [FUZZY PATTERN]`      | Open selected file with `$EDITOR`
@@ -29,7 +29,7 @@ bash cmdline              | description
 
 **git**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `fbr`                     | Checkout Git branch (including remote branches)
 `fco`                     | Checkout Git branch/tag
@@ -42,7 +42,7 @@ bash cmdline              | description
 
 **history**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `fh`                      | Select line from history, repeat without editing
 `fhe`                     | Select line from history, leave for editing
@@ -51,19 +51,19 @@ bash cmdline              | description
 
 **pid**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `fkill`                   | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
 
 **tags**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `ftags`                   | Search ctags
 
 **tmux**
 
-bash cmdline              | description
+cmdline                   | description
 ---                       | ---
 `fs [FUZZY PATTERN]`      | Select tmux session
 `ftpane`                  | Switch pane
@@ -72,7 +72,7 @@ bash cmdline              | description
 
 **file**
 
-zsh cmdline               | description
+cmdline                   | description
 ---                       | ---
 <kbd>Alt-i</kbd>          | Paste the selected entry from `locate` output into the command line
 
@@ -117,13 +117,13 @@ EOF
 **Arch Linux**
 
 ```sh
-# bash users only
+# bash users
 cat >> ~/.bashrc <<'EOF'
 [[ -e "/usr/share/fzf/fzf-extras.bash" ]] \
   && source /usr/share/fzf/fzf-extras.bash
 EOF
 
-# zsh users only
+# zsh users
 cat >> ~/.zshrc <<'EOF'
 [[ -e "/usr/share/fzf/fzf-extras.zsh" ]] \
   && source /usr/share/fzf/fzf-extras.zsh
@@ -133,25 +133,18 @@ EOF
 **Manual**
 
 ```sh
-# bash users only
+# bash users
 cat >> ~/.bashrc <<'EOF'
 [[ -e "$HOME/.fzf-extras/fzf-extras.sh" ]] \
   && source "$HOME/.fzf-extras/fzf-extras.sh"
 EOF
 
-# zsh users only
+# zsh users
 cat >> ~/.zshrc <<'EOF'
 [[ -e "$HOME/.fzf-extras/fzf-extras.zsh" ]] \
   && source "$HOME/.fzf-extras/fzf-extras.zsh"
 EOF
 ```
-
-Zsh users should not be sourcing `fzf-extras.sh`.
-
-The lack of meaningful support for Zsh will be fixed pending suitable
-PRs from Zsh-using contributors. Note it is perfectly acceptable
-to duplicate code from `fzf-extras.sh` into `fzf-extras.zsh`. See:
-https://github.com/atweiden/fzf-extras/issues/12.
 
 ## Dependencies
 
