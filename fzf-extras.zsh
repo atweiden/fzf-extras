@@ -381,11 +381,9 @@ fstash() {
           --print-query \
           --expect=ctrl-d,ctrl-b
   )"; do
-    mapfile -t out <<< "$out"
-    q="${out[0]}"
-    k="${out[1]}"
-    sha="${out[-1]}"
-    sha="${sha%% *}"
+    q=$(head -1 <<< "$out")
+    k=$(head -2 <<< "$out" | tail -1)
+    sha=$(tail -1 <<< "$out" | cut -d' ' -f1)
     [[ -z "$sha" ]] && continue
     if [[ "$k" == 'ctrl-d' ]]; then
       git diff "$sha"
