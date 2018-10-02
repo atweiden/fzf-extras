@@ -242,11 +242,9 @@ fbr() {
       --format='%(refname:short)'
   )" || return
 
-  num_branches="$(echo $(wc -l <<< "$branches") | xargs echo -n)"
-
   branch="$(
     echo "$branches" \
-      | fzf-tmux -d "$((2 + $num_branches))" +m
+      | fzf-tmux +m
   )" || return
 
   target="$(
