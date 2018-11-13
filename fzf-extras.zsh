@@ -396,6 +396,11 @@ fstash() {
   done
 }
 
+# fsquash = git squash (git-extras) combined with fcs
+fsquash() {
+  git squash $(fcs) "$1"
+}
+
 # fzf-gitlog-widget - git log browser
 fzf-gitlog-widget() {
   local git_cmd
