@@ -119,14 +119,14 @@ EOF
 ```sh
 # bash users only
 cat >> ~/.bashrc <<'EOF'
-[[ -e "/etc/profile.d/fzf-extras.bash" ]] \
-  && source /etc/profile.d/fzf-extras.bash
+[[ -e "/usr/share/fzf/fzf-extras.bash" ]] \
+  && source /usr/share/fzf/fzf-extras.bash
 EOF
 
 # zsh users only
 cat >> ~/.zshrc <<'EOF'
-[[ -e "/etc/profile.d/fzf-extras.zsh" ]] \
-  && source /etc/profile.d/fzf-extras.zsh
+[[ -e "/usr/share/fzf/fzf-extras.zsh" ]] \
+  && source /usr/share/fzf/fzf-extras.zsh
 EOF
 ```
 
