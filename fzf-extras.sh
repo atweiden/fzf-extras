@@ -4,7 +4,7 @@
 fe() {
   local IFS=$'\n'
   local files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
-  [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+  [[ -n "$files" ]] && echo "${EDITOR:-vim} ${files[@]}" | runcmd
 }
 
 # Modified version of fe() where you can press
@@ -313,11 +313,11 @@ ftpane() {
 # e - open 'frecency' files in $VISUAL editor
 e() {
     local files
-    files=$(fasd -fl |
+    files=($(fasd -fl |
                 fzf --tac --reverse -1 --no-sort  --multi --tiebreak=index\
                 --bind=ctrl-x:toggle-sort --query "$*" |
-                    grep -o "/.*")
-    [ $files ] && $VISUAL $(echo ${files}) || echo 'No file selected'
+                    grep -o "/.*"))
+    [[ -n $files ]] && echo "${VISUAL:-vim} ${files[@]}" | runcmd || echo 'No file selected'
 }
 
 # _zz - selectable cd to frecency directory
