@@ -349,7 +349,7 @@ e() {
                     --bind=ctrl-v:toggle-preview \
                     --bind=ctrl-x:toggle-sort \
                     --query "$*" |
-                        grep -o "/.*"))
+                        awk '{print $2}'))
     [[ -n $files ]] && echo "${VISUAL:-vim} ${files[@]}" | runcmd || echo 'No file selected'
 }
 
@@ -370,6 +370,6 @@ _zz() {
                 --bind=ctrl-v:toggle-preview \
                 --bind=ctrl-x:toggle-sort \
                 --query "$*" |
-                   grep -o '/.*')
+                    awk '{print $2}')
     [ $dir ] && cd $dir
 }
