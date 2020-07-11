@@ -23,6 +23,7 @@ fo() {
 
 # zd - cd into selected directory with options
 # The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+# ctrl-v toggle preview window
 zd() {
     usage() {
         echo "usage: zd [OPTIONS]"
@@ -68,15 +69,22 @@ zd() {
 # _fd - cd to selected directory
 _fd() {
   local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
+  dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null |
+          fzf +m \
+              --preview 'tree -C {} | head -100' \
+              --preview-window right:hidden:wrap \
+              --bind=ctrl-v:toggle-preview) &&
   cd "$dir"
 }
 
 # _fda - including hidden directories
 _fda() {
   local dir
-  dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
+  dir=$(find ${1:-.} -type d 2> /dev/null |
+          fzf +m \
+              --preview 'tree -C {} | head -100' \
+              --preview-window right:hidden:wrap \
+              --bind=ctrl-v:toggle-preview ) && cd "$dir"
 }
 
 # _fdr - cd to selected parent directory
@@ -90,20 +98,32 @@ _fdr() {
       get_parent_dirs $(dirname "$1")
     fi
   }
-  local DIR=$(get_parent_dirs $(realpath "${1:-$PWD}") | fzf +m)
-  cd "$DIR"
+  local dir
+  dir=$(get_parent_dirs $(realpath "${1:-$PWD}") |
+              fzf +m \
+                  --preview 'tree -C {} | head -100' \
+                  --preview-window right:hidden:wrap \
+                  --bind=ctrl-v:toggle-preview) && cd "$dir"
 }
 
 # _cdf - cd into the directory of the selected file
 _cdf() {
    local file
-   file=$(fzf +m -q "$*") && cd $(dirname "$file")
+   file=$(fzf +m -q "$*" \
+            --preview 'head -100 {}' \
+            --preview-window right:hidden:wrap \
+            --bind=ctrl-v:toggle-preview) && cd $(dirname "$file")
 }
 
 # _fst - cd into the directory from stack
 _fst() {
     local dir
-    dir=$(echo $dirstack | sed -e 's/\s/\n/g' | fzf +s +m -1 -q "$*")
+    dir=$(echo $dirstack |
+            sed -e 's/\s/\n/g' |
+            fzf +s +m -1 -q "$*" \
+                --preview 'tree -C {} | head -100' \
+                --preview-window right:hidden:wrap \
+                --bind=ctrl-v:toggle-preview)
     [ $dir ] && cd $dir  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
 }
 
@@ -311,21 +331,43 @@ ftpane() {
 }
 
 # e - open 'frecency' files in $VISUAL editor
+# ctrl-v toggle preview window
+# ctrl-x toggle sort
 e() {
     local files
     files=($(fasd -fl |
-                fzf --tac --reverse -1 --no-sort  --multi --tiebreak=index\
-                --bind=ctrl-x:toggle-sort --query "$*" |
-                    grep -o "/.*"))
+                fzf --tac \
+                    --reverse \
+                    -1 \
+                    --no-sort \
+                    --multi \
+                    --tiebreak=index \
+                    --preview 'head -100 {}' \
+                    --preview-window right:hidden:wrap \
+                    --bind=ctrl-v:toggle-preview \
+                    --bind=ctrl-x:toggle-sort \
+                    --query "$*" |
+                        grep -o "/.*"))
     [[ -n $files ]] && echo "${VISUAL:-vim} ${files[@]}" | runcmd || echo 'No file selected'
 }
 
 # _zz - selectable cd to frecency directory
+# ctrl-v toggle preview window
+# ctrl-x toggle sort
 _zz() {
     local dir
     dir=$(fasd -dl |
-            fzf --tac --reverse -1 --no-sort --no-multi --tiebreak=index\
-            --bind=ctrl-x:toggle-sort --query "$*" |
-               grep -o '/.*')
+            fzf --tac \
+                --reverse \
+                -1 \
+                --no-sort \
+                --no-multi \
+                --tiebreak=index \
+                --preview 'tree -C {} | head -100' \
+                --preview-window right:hidden:wrap \
+                --bind=ctrl-v:toggle-preview \
+                --bind=ctrl-x:toggle-sort \
+                --query "$*" |
+                   grep -o '/.*')
     [ $dir ] && cd $dir
 }
