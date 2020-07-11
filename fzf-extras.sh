@@ -124,7 +124,9 @@ _fst() {
                 --preview 'tree -C {} | head -100' \
                 --preview-window right:hidden:wrap \
                 --bind=ctrl-v:toggle-preview)
-    [ $dir ] && cd $dir  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
+    # check $dir exist for Ctrl-C interrapt
+    # or change directory to $HOME (= no value cd)
+    [ $dir ] && cd $dir
 }
 
 # utility function used to run the command in the shell
