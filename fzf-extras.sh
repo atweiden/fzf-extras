@@ -20,6 +20,15 @@ fo() {
   fi
 }
 
+# fzf --preview command for file and directory
+if type bat >/dev/null 2>&1; then
+    local previewcmd='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
+elif type pygmentize >/dev/null 2>&1; then
+    local previewcmd='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
+else
+    local previewcmd='head -n $FZF_PREVIEW_LINES {}'
+fi
+local previewcmddir='tree -C {} | head -n $FZF_PREVIEW_LINES'
 
 # zd - cd into selected directory with options
 # The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
@@ -71,10 +80,12 @@ _fd() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null |
           fzf +m \
-              --preview 'tree -C {} | head -100' \
+              --preview $previewcmddir \
               --preview-window right:hidden:wrap \
-              --bind=ctrl-v:toggle-preview) &&
-  cd "$dir"
+              --bind=ctrl-v:toggle-preview \
+              --bind=ctrl-x:toggle-sort \
+              --header='<C-V> toggle preview <C-X> toggle sort' \
+              ) && cd "$dir"
 }
 
 # _fda - including hidden directories
@@ -82,9 +93,13 @@ _fda() {
   local dir
   dir=$(find ${1:-.} -type d 2> /dev/null |
           fzf +m \
-              --preview 'tree -C {} | head -100' \
+              --preview $previewcmddir \
               --preview-window right:hidden:wrap \
-              --bind=ctrl-v:toggle-preview ) && cd "$dir"
+              --bind=ctrl-v:toggle-preview \
+              --bind=ctrl-x:toggle-sort \
+              --header='<C-V> toggle preview <C-X> toggle sort' \
+              ) &&
+              cd "$dir"
 }
 
 # _fdr - cd to selected parent directory
@@ -101,18 +116,24 @@ _fdr() {
   local dir
   dir=$(get_parent_dirs $(realpath "${1:-$PWD}") |
               fzf +m \
-                  --preview 'tree -C {} | head -100' \
+                  --preview $previewcmddir \
                   --preview-window right:hidden:wrap \
-                  --bind=ctrl-v:toggle-preview) && cd "$dir"
+                  --bind=ctrl-v:toggle-preview \
+                  --bind=ctrl-x:toggle-sort \
+                  --header='<C-V> toggle preview <C-X> toggle sort' \
+                  ) && cd "$dir"
 }
 
 # _cdf - cd into the directory of the selected file
 _cdf() {
    local file
    file=$(fzf +m -q "$*" \
-            --preview 'head -100 {}' \
+            --preview $previewcmd \
             --preview-window right:hidden:wrap \
-            --bind=ctrl-v:toggle-preview) && cd $(dirname "$file")
+            --bind=ctrl-v:toggle-preview \
+            --bind=ctrl-x:toggle-sort \
+            --header='<C-V> toggle preview <C-X> toggle sort' \
+            ) && cd $(dirname "$file")
 }
 
 # _fst - cd into the directory from stack
@@ -121,9 +142,12 @@ _fst() {
     dir=$(echo $dirstack |
             sed -e 's/\s/\n/g' |
             fzf +s +m -1 -q "$*" \
-                --preview 'tree -C {} | head -100' \
+                --preview $previewcmddir \
                 --preview-window right:hidden:wrap \
-                --bind=ctrl-v:toggle-preview)
+                --bind=ctrl-v:toggle-preview
+                --bind=ctrl-x:toggle-sort \
+                --header='<C-V> toggle preview <C-X> toggle sort' \
+            )
     # check $dir exist for Ctrl-C interrapt
     # or change directory to $HOME (= no value cd)
     [ $dir ] && cd $dir
@@ -344,10 +368,11 @@ e() {
                     --no-sort \
                     --multi \
                     --tiebreak=index \
-                    --preview 'head -100 {}' \
+                    --preview $previewcmd \
                     --preview-window right:hidden:wrap \
                     --bind=ctrl-v:toggle-preview \
                     --bind=ctrl-x:toggle-sort \
+                    --header='<C-V> toggle preview <C-X> toggle sort' \
                     --query "$*" |
                         awk '{print $2}'))
     [[ -n $files ]] && echo "${VISUAL:-vim} ${files[@]}" | runcmd || echo 'No file selected'
@@ -365,10 +390,11 @@ _zz() {
                 --no-sort \
                 --no-multi \
                 --tiebreak=index \
-                --preview 'tree -C {} | head -100' \
+                --preview $previewcmddir \
                 --preview-window right:hidden:wrap \
                 --bind=ctrl-v:toggle-preview \
                 --bind=ctrl-x:toggle-sort \
+                --header='<C-V> toggle preview <C-X> toggle sort' \
                 --query "$*" |
                     awk '{print $2}')
     [ $dir ] && cd $dir
