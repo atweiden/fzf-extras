@@ -22,11 +22,11 @@ fo() {
 
 # fzf --preview command for file and directory
 if type pygmentize >/dev/null 2>&1; then
-    __previewcmd='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
+    FZF_PREVIEW_CMD='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
 elif type bat >/dev/null 2>&1; then
-    __previewcmd='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
+    FZF_PREVIEW_CMD='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
 else
-    __previewcmd='head -n $FZF_PREVIEW_LINES {}'
+    FZF_PREVIEW_CMD='head -n $FZF_PREVIEW_LINES {}'
 fi
 
 # zd - cd into selected directory with options
@@ -127,7 +127,7 @@ _fdr() {
 _cdf() {
    local file
    file=$(fzf +m -q "$*" \
-            --preview=${__previewcmd} \
+            --preview=${FZF_PREVIEW_CMD} \
             --preview-window='right:hidden:wrap' \
             --bind=ctrl-v:toggle-preview \
             --bind=ctrl-x:toggle-sort \
@@ -367,7 +367,7 @@ e() {
                     --no-sort \
                     --multi \
                     --tiebreak=index \
-                    --preview=${__previewcmd} \
+                    --preview=${FZF_PREVIEW_CMD} \
                     --preview-window='right:hidden:wrap' \
                     --bind=ctrl-v:toggle-preview \
                     --bind=ctrl-x:toggle-sort \
