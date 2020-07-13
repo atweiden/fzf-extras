@@ -21,14 +21,13 @@ fo() {
 }
 
 # fzf --preview command for file and directory
-if type bat >/dev/null 2>&1; then
-    local previewcmd='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
-elif type pygmentize >/dev/null 2>&1; then
-    local previewcmd='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
+if type pygmentize >/dev/null 2>&1; then
+    __previewcmd='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
+elif type bat >/dev/null 2>&1; then
+    __previewcmd='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
 else
-    local previewcmd='head -n $FZF_PREVIEW_LINES {}'
+    __previewcmd='head -n $FZF_PREVIEW_LINES {}'
 fi
-local previewcmddir='tree -C {} | head -n $FZF_PREVIEW_LINES'
 
 # zd - cd into selected directory with options
 # The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
@@ -80,8 +79,8 @@ _fd() {
   local dir
   dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2> /dev/null |
           fzf +m \
-              --preview $previewcmddir \
-              --preview-window right:hidden:wrap \
+              --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+              --preview-window='right:hidden:wrap' \
               --bind=ctrl-v:toggle-preview \
               --bind=ctrl-x:toggle-sort \
               --header='<C-V> toggle preview <C-X> toggle sort' \
@@ -93,8 +92,8 @@ _fda() {
   local dir
   dir=$(find ${1:-.} -type d 2> /dev/null |
           fzf +m \
-              --preview $previewcmddir \
-              --preview-window right:hidden:wrap \
+              --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+              --preview-window='right:hidden:wrap' \
               --bind=ctrl-v:toggle-preview \
               --bind=ctrl-x:toggle-sort \
               --header='<C-V> toggle preview <C-X> toggle sort' \
@@ -116,8 +115,8 @@ _fdr() {
   local dir
   dir=$(get_parent_dirs $(realpath "${1:-$PWD}") |
               fzf +m \
-                  --preview $previewcmddir \
-                  --preview-window right:hidden:wrap \
+                  --preview 'tree -C {} | head -n $FZF_PREVIEW_LINES' \
+                  --preview-window='right:hidden:wrap' \
                   --bind=ctrl-v:toggle-preview \
                   --bind=ctrl-x:toggle-sort \
                   --header='<C-V> toggle preview <C-X> toggle sort' \
@@ -128,8 +127,8 @@ _fdr() {
 _cdf() {
    local file
    file=$(fzf +m -q "$*" \
-            --preview $previewcmd \
-            --preview-window right:hidden:wrap \
+            --preview=${__previewcmd} \
+            --preview-window='right:hidden:wrap' \
             --bind=ctrl-v:toggle-preview \
             --bind=ctrl-x:toggle-sort \
             --header='<C-V> toggle preview <C-X> toggle sort' \
@@ -142,9 +141,9 @@ _fst() {
     dir=$(echo $dirstack |
             sed -e 's/\s/\n/g' |
             fzf +s +m -1 -q "$*" \
-                --preview $previewcmddir \
-                --preview-window right:hidden:wrap \
-                --bind=ctrl-v:toggle-preview
+                --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+                --preview-window='right:hidden:wrap' \
+                --bind=ctrl-v:toggle-preview \
                 --bind=ctrl-x:toggle-sort \
                 --header='<C-V> toggle preview <C-X> toggle sort' \
             )
@@ -368,8 +367,8 @@ e() {
                     --no-sort \
                     --multi \
                     --tiebreak=index \
-                    --preview $previewcmd \
-                    --preview-window right:hidden:wrap \
+                    --preview=${__previewcmd} \
+                    --preview-window='right:hidden:wrap' \
                     --bind=ctrl-v:toggle-preview \
                     --bind=ctrl-x:toggle-sort \
                     --header='<C-V> toggle preview <C-X> toggle sort' \
@@ -390,8 +389,8 @@ _zz() {
                 --no-sort \
                 --no-multi \
                 --tiebreak=index \
-                --preview $previewcmddir \
-                --preview-window right:hidden:wrap \
+                --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+                --preview-window='right:hidden:wrap' \
                 --bind=ctrl-v:toggle-preview \
                 --bind=ctrl-x:toggle-sort \
                 --header='<C-V> toggle preview <C-X> toggle sort' \
