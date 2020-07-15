@@ -4,8 +4,8 @@
 # directory
 # -----------------------------------------------------------------------------
 
-# _fd - cd to selected directory
-_fd() {
+# zdd - cd to selected directory
+zdd() {
   local dir
   dir="$(
     find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2> /dev/null \
@@ -14,8 +14,8 @@ _fd() {
   cd "$dir" || return
 }
 
-# _fda - including hidden directories
-_fda() {
+# zda - including hidden directories
+zda() {
   local dir
   dir="$(
     find "${1:-.}" -type d 2> /dev/null \
@@ -24,8 +24,8 @@ _fda() {
   cd "$dir" || return
 }
 
-# _fdr - cd to selected parent directory
-_fdr() {
+# zdr - cd to selected parent directory
+zdr() {
   local dirs=()
   local parent_dir
 
@@ -46,8 +46,8 @@ _fdr() {
   cd "$parent_dir" || return
 }
 
-# _fst - cd into the directory from stack
-_fst() {
+# zst - cd into the directory from stack
+zst() {
   local dir
   dir="$(
     dirs \
@@ -62,15 +62,15 @@ _fst() {
   fi
 }
 
-# _cdf - cd into the directory of the selected file
-_cdf() {
+# zdf - cd into the directory of the selected file
+zdf() {
   local file
   file="$(fzf +m -q "$*")"
   cd "$(dirname "$file")" || return
 }
 
-# _zz - selectable cd to frecency directory
-_zz() {
+# zz - selectable cd to frecency directory
+zz() {
   local dir
 
   dir="$(
@@ -91,7 +91,7 @@ _zz() {
 }
 
 # zd - cd into selected directory with options
-# The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
+# The super function of zdd, zda, zdr, zst, zdf, zz
 zd() {
   read -r -d '' helptext <<EOF
 usage: zd [OPTIONS]
@@ -112,28 +112,28 @@ EOF
 
   if [[ -z "$1" ]]; then
     # no arg
-    _fd
+    zdd
   elif [[ "$1" == '..' ]]; then
     # arg is '..'
     shift
-    _fdr "$1"
+    zdr "$1"
   elif [[ "$1" == '-' ]]; then
     # arg is '-'
     shift
-    _fst "$*"
+    zst "$*"
   elif [[ "${1:0:1}" != '-' ]]; then
     # first string is not -
-    _fd "$(realpath "$1")"
+    zdd "$(realpath "$1")"
   else
     # args is start from '-'
     while getopts darfszh OPT; do
       case "$OPT" in
-        d) shift; _fd  "$1";;
-        a) shift; _fda "$1";;
-        r) shift; _fdr "$1";;
-        s) shift; _fst "$*";;
-        f) shift; _cdf "$*";;
-        z) shift; _zz  "$*";;
+        d) shift; zdd  "$1";;
+        a) shift; zda "$1";;
+        r) shift; zdr "$1";;
+        s) shift; zst "$*";;
+        f) shift; zdf "$*";;
+        z) shift; zz  "$*";;
         h) usage; return 0;;
         *) usage; return 1;;
       esac
