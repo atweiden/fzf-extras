@@ -10,13 +10,13 @@ Additional key bindings for fzf, primarily Bash.
 
 bash cmdline              | description
 ---                       | ---
-`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `zdd`, `zda`, `zdr`, `zst`, `zdf`, `zz`
-`zdf`                     | cd into the directory of the selected file
+`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `zdd`, `zda`, `zdr`, `zdf`, `zst`, `zz`
 `zdd`                     | cd into selected directory
 `zda`                     | cd into selected directory, including hidden directories
 `zdr`                     | cd into selected parent directory
-`zst`                     | cd into the directory from stack
-`zz`                      | Selectable cd to 'frecency' directory
+`zdf`                     | cd into directory of selected file
+`zst`                     | cd into directory from stack
+`zz`                      | cd into selectable 'frecency' directory
 
 **file**
 
@@ -36,7 +36,7 @@ bash cmdline              | description
 `fcoc`                    | Checkout Git commit
 `fcs`                     | Get Git commit SHA hash
 `fshow`                   | Git commit browser
-`fstash`                  | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
+`fstash`                  | Git stash management (<kbd>Enter</kbd> to show stash contents, <kbd>Ctrl+D</kbd> to show diff of stash against current HEAD, <kbd>Ctrl+B</kbd> to check stash out as a branch, for easier merging)
 `fzf-gitlog-multi-widget` | Multi-selectable `git show`
 `fzf-gitlog-widget`       | Git log browser
 
@@ -46,8 +46,8 @@ bash cmdline              | description
 ---                       | ---
 `fh`                      | Select line from history, repeat without editing
 `fhe`                     | Select line from history, leave for editing
-`runcmd`                  | Utility function used to run the command in the shell
-`writecmd`                | Utility function used to write the command in the shell
+`runcmd`                  | Utility function used to run shell command
+`writecmd`                | Utility function used to write shell command
 
 **pid**
 
@@ -74,7 +74,7 @@ bash cmdline              | description
 
 zsh cmdline               | description
 ---                       | ---
-<kbd>Alt-i</kbd>          | Paste the selected entry from `locate` output into the command line
+<kbd>Alt-i</kbd>          | Paste selected entry from `locate` output into command line
 
 ## Installation
 
@@ -104,7 +104,7 @@ OPENER=mimeo
 EOF
 ```
 
-**MacOS**
+**macOS**
 
 ```sh
 cat >> ~/.bashrc <<'EOF'
