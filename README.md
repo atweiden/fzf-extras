@@ -10,13 +10,13 @@ Additional key bindings for fzf, primarily Bash.
 
 bash cmdline              | description
 ---                       | ---
-`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `_fd`, `_fda`, `_fdr`, `_fst`, `_cdf`, `_zz`
-`_cdf`                    | cd into the directory of the selected file
-`_fd`                     | cd into selected directory
-`_fda`                    | cd into selected directory, including hidden directories
-`_fdr`                    | cd into selected parent directory
-`_fst`                    | cd into the directory from stack
-`_zz`                     | Selectable cd to 'frecency' directory
+`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `zdd`, `zda`, `zdr`, `zst`, `zdf`, `zz`
+`zdf`                     | cd into the directory of the selected file
+`zdd`                     | cd into selected directory
+`zda`                     | cd into selected directory, including hidden directories
+`zdr`                     | cd into selected parent directory
+`zst`                     | cd into the directory from stack
+`zz`                      | Selectable cd to 'frecency' directory
 
 **file**
 
