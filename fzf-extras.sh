@@ -373,7 +373,7 @@ e() {
                     --bind=ctrl-x:toggle-sort \
                     --header='<C-V> toggle preview <C-X> toggle sort' \
                     --query "$*" |
-                        awk '{print $2}'))
+                        grep -o "/.*"))   # awk {'print $2'} dosn't work
     [[ -n $files ]] && echo "${VISUAL:-vim} ${files[@]}" | runcmd || echo 'No file selected'
 }
 
@@ -395,6 +395,6 @@ _zz() {
                 --bind=ctrl-x:toggle-sort \
                 --header='<C-V> toggle preview <C-X> toggle sort' \
                 --query "$*" |
-                    awk '{print $2}')
+                    grep -o "/.*")   # awk {'print $2'} dosn't work
     [ $dir ] && cd $dir
 }
