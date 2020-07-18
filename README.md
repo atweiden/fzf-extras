@@ -1,127 +1,184 @@
-fzf-extras
-==========
-# Installation
-## Use zplug
-If you use [zplug](https://github.com/zplug/zplug), write on your .zshrc
+# fzf-extras
 
+Additional key bindings for fzf, primarily Bash.
+
+## Usage
+
+### Bash
+
+**directory**
+
+bash cmdline              | description
+---                       | ---
+`zd`                      | 'fuzzy-finder' + 'cd' = 'zd', the super function of `zdd`, `zda`, `zdr`, `zdf`, `zst`, `zz`
+`zdd`                     | cd into selected directory
+`zda`                     | cd into selected directory, including hidden directories
+`zdr`                     | cd into selected parent directory
+`zdf`                     | cd into directory of selected file
+`zst`                     | cd into directory from stack
+`zz`                      | cd into selectable 'frecency' directory
+
+**file**
+
+bash cmdline              | description
+---                       | ---
+`e`                       | Open 'frecency' files with `$VISUAL` editor
+`fe [FUZZY PATTERN]`      | Open selected file with `$EDITOR`
+`fo`                      | Equivalent to `fe`, but opens file with `$OPENER` (default: `xdg-open`) if you press <kbd>Ctrl+O</kbd>
+`v`                       | Open selected files from `~/.viminfo` with `$EDITOR`
+
+**git**
+
+bash cmdline              | description
+---                       | ---
+`fbr`                     | Checkout Git branch (including remote branches)
+`fco`                     | Checkout Git branch/tag
+`fcoc`                    | Checkout Git commit
+`fcs`                     | Get Git commit SHA hash
+`fshow`                   | Git commit browser
+`fstash`                  | Git stash management (<kbd>Enter</kbd> to show stash contents, <kbd>Ctrl+D</kbd> to show diff of stash against current HEAD, <kbd>Ctrl+B</kbd> to check stash out as a branch, for easier merging)
+`fzf-gitlog-multi-widget` | Multi-selectable `git show`
+`fzf-gitlog-widget`       | Git log browser
+
+**history**
+
+bash cmdline              | description
+---                       | ---
+`fh`                      | Select line from history, repeat without editing
+`fhe`                     | Select line from history, leave for editing
+`runcmd`                  | Utility function used to run shell command
+`writecmd`                | Utility function used to write shell command
+
+**pid**
+
+bash cmdline              | description
+---                       | ---
+`fkill`                   | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
+
+**tags**
+
+bash cmdline              | description
+---                       | ---
+`ftags`                   | Search ctags
+
+**tmux**
+
+bash cmdline              | description
+---                       | ---
+`fs [FUZZY PATTERN]`      | Select tmux session
+`ftpane`                  | Switch pane
+
+### Zsh
+
+**file**
+
+zsh cmdline               | description
+---                       | ---
+<kbd>Alt-i</kbd>          | Paste selected entry from `locate` output into command line
+
+## Installation
+
+### Install fzf-extras
+
+**Arch Linux**
+
+Install [aur/fzf-extras](https://aur.archlinux.org/packages/fzf-extras).
+
+**Manual**
+
+```sh
+git clone https://github.com/atweiden/fzf-extras ~/.fzf-extras
 ```
-zplug "u1and0/fzf-extras",\
-    on:"clvv/fasd",\
-    use:"fzf*"
-# Recomend options
-alias zz='zd -z $*'
-alias gz='fzf-gitlog-widget'
-alias gx='fzf-gitlog-multi-widget'
+
+### Configure fzf-extras
+
+To make use of function `fo`, consider setting the `$OPENER` environment
+variable. If `$OPENER` is unset, `fo` will attempt to open files with
+`xdg-open` when pressing <kbd>Ctrl+O</kbd>.
+
+**Arch Linux**
+
+```sh
+cat >> ~/.bashrc <<'EOF'
+OPENER=mimeo
+EOF
 ```
 
-...and reload shell `$SHELL -l`
+**macOS**
 
-
-## Use git
-Or from my github repository
-
-```
-git clone https://github.com/u1and0/fzf-extras
-cd ./fzf-extras
-source fzf-extra.sh
-source fzf-extra.zsh
+```sh
+cat >> ~/.bashrc <<'EOF'
+OPENER=open
+EOF
 ```
 
-# Dependency
-* [clvv/fasd](https://github.com/clvv/fasd)
-* [junegunn/fzf-bin](https://github.com/junegunn/fzf)
-* [tmux/tmux](https://github.com/tmux/tmux)
+### Source fzf-extras
 
+**Arch Linux**
 
-## Archlinux
-Use pacman on archlinux OS
+```sh
+# bash users only
+cat >> ~/.bashrc <<'EOF'
+[[ -e "/usr/share/fzf/fzf-extras.bash" ]] \
+  && source /usr/share/fzf/fzf-extras.bash
+EOF
 
-```
-pacman -S fasd fzf tmux
-```
-
-
-## zplug
-Or use [zplug](https://github.com/zplug/zplug)
-
-```
-# fasd
-zplug "clvv/fasd", as:command, use:fasd
-
-# fzf
-zplug "junegunn/fzf-bin",\
-    as:command,\
-    from:gh-r,\
-    rename-to:"fzf",\
-    hook-load:"source $ZPLUG_REPOS/junegunn/fzf/shell/key-bindings.zsh;\
-               source $ZPLUG_REPOS/junegunn/fzf/shell/completion.zsh"
-# Recomend options
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--ansi --height 40% --reverse --no-border'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# tmux
-# I don't know how... please tell me anyone
+# zsh users only
+cat >> ~/.zshrc <<'EOF'
+[[ -e "/usr/share/fzf/fzf-extras.zsh" ]] \
+  && source /usr/share/fzf/fzf-extras.zsh
+EOF
 ```
 
+**Manual**
 
-# Additional key bindings for fzf, primarily Bash.
+```sh
+# bash users only
+cat >> ~/.bashrc <<'EOF'
+[[ -e "$HOME/.fzf-extras/fzf-extras.sh" ]] \
+  && source "$HOME/.fzf-extras/fzf-extras.sh"
+EOF
 
-bash cmdline         | description
----                  | ---
-`zd`                 | 'fuzzy-finder' + 'cd' = 'zd', The super function of _fd, _fda, _fdr, _fst, _cdf, _zz
-`_fd`                | cd into selected directory
-`_fda`               | cd into selected directory, including hidden directories
-`_fdr`               | cd into selected parent directory
-`_fst`               | cd into the directory from stack
-`_cdf`               | cd into the directory of the selected file
-`_zz`                | selectable cd to frecency directory
-`fbr`                | Checkout Git branch (including remote branches)
-`fco`                | Checkout Git branch/tag
-`fcoc`               | Checkout Git commit
-`fcs`                | Get Git commit SHA hash
-`fe [FUZZY PATTERN]` | Open the selected file with the default editor
-`fh`                 | Select line from history, repeat without editing
-`fhe`                | Select line from history, leave for editing
-`fkill`              | Select process to kill (alternatively, type `kill`˽<kbd>Tab</kbd>)
-`fo`                 | Equivalent to `fe`, but opens it with `xdg-open` if you press <kbd>Ctrl+O</kbd>
-`fs [FUZZY PATTERN]` | Select tmux session
-`fshow`              | Git commit browser
-`fstash`             | Git stash management (<kbd>Enter</kbd> to show contents of the stash, <kbd>Ctrl+D</kbd> to show a diff of the stash against your current HEAD, <kbd>Ctrl+B</kbd> to check the stash out as a branch, for easier merging)
-`fzf-gitlog-widget`  | git log browser
-`fzf-gitlog-multi-widget` | Multi-Selectable git show
-`ftags`              | Search ctags
-`ftpane`             | Switch pane
-`v`                  | Open files in `~/.viminfo`
-`runcmd`             | Utility function used to run the command in the shell
-`writecmd`           | Utility function used to write the command in the shell
-`e`                  | Open 'frecency' files in $VISUAL editor
+# zsh users only
+cat >> ~/.zshrc <<'EOF'
+[[ -e "$HOME/.fzf-extras/fzf-extras.zsh" ]] \
+  && source "$HOME/.fzf-extras/fzf-extras.zsh"
+EOF
+```
 
+Zsh users should not be sourcing `fzf-extras.sh`.
 
-zsh cmdline      | description
----              | ---
-<kbd>Alt-i</kbd> | Paste the selected entry from `locate` output into the command line
+The lack of meaningful support for Zsh will be fixed pending suitable
+PRs from Zsh-using contributors. Note it is perfectly acceptable
+to duplicate code from `fzf-extras.sh` into `fzf-extras.zsh`. See:
+https://github.com/atweiden/fzf-extras/issues/12.
 
+## Dependencies
 
-Sources
--------
+**Required**
 
-- [fzf wiki](https://github.com/junegunn/fzf/wiki)
+- [bash](https://www.gnu.org/software/bash/) or [zsh](https://www.zsh.org/)
+- [fzf](https://github.com/junegunn/fzf)
+- [tmux](https://github.com/tmux/tmux)
+
+**Optional**
+
+- [ctags](https://github.com/universal-ctags/ctags)
+- [fasd](https://github.com/clvv/fasd)
+- [git](https://git-scm.com/)
+- [mlocate](https://pagure.io/mlocate)
+- [vim](https://www.vim.org/)
+- [xdg-utils](https://www.freedesktop.org/wiki/Software/xdg-utils/)
+
+## Sources
+
+- [fzf/wiki](https://github.com/junegunn/fzf/wiki)
 - [junegunn/dotfiles](https://github.com/junegunn/dotfiles)
 
-
-See Also
---------
+## See Also
 
 - [DanielFGray/fzf-scripts](https://github.com/DanielFGray/fzf-scripts)
-- [clvv/fasd](https://github.com/clvv/fasd)
-- [junegunn/fzf-bin](https://github.com/junegunn/fzf)
-- [tmux/tmux](https://github.com/tmux/tmux)
-- [b4b4r07/enhancd](https://github.com/b4b4r07/enhancd)
-- [rupa/z](https://github.com/rupa/z)
 
-
-License
--------
+## License
 
 [MIT](LICENSE)
