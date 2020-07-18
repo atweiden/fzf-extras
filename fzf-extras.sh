@@ -125,7 +125,6 @@ zz() {
           --bind=ctrl-v:toggle-preview \
           --bind=ctrl-x:toggle-sort \
           --header='<C-V> toggle preview <C-X> toggle sort' \
-      | grep -o '/.*'
   )" || return
 
   cd "$dir" || return
