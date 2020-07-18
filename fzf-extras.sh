@@ -189,9 +189,11 @@ EOF
 
 # e - open 'frecency' files in $VISUAL editor
 e() {
-  local files
+  local IFS=$'\n'
+  local files=()
 
-  files="$(
+  files=(
+  "$(
     fasd -fl \
       | fzf \
           --tac \
@@ -206,10 +208,10 @@ e() {
           --bind=ctrl-v:toggle-preview \
           --bind=ctrl-x:toggle-sort \
           --header='<C-V> toggle preview <C-X> toggle sort' \
-      | grep -o "/.*"
-  )" || echo 'No file selected'; return
+      )"
+  ) || return
 
-  "${VISUAL:-vim}" "$files"
+  "${EDITOR:-vim}" "${files[@]}"
 }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -223,7 +225,12 @@ fe() {
           --query="$1" \
           --multi \
           --select-1 \
-          --exit-0
+          --exit-0 \
+          --preview="${FZF_PREVIEW_CMD}" \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='<C-V> toggle preview <C-X> toggle sort'
     )"
   ) || return
   "${EDITOR:-vim}" "${files[@]}"

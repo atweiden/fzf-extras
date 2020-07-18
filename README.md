@@ -22,7 +22,7 @@ bash cmdline              | description
 
 bash cmdline              | description
 ---                       | ---
-`e`                       | Open 'frecency' files with `$VISUAL` editor
+`e [FUZZY PATTERN]`       | Open 'frecency' files with `$EDITOR` editor
 `fe [FUZZY PATTERN]`      | Open selected file with `$EDITOR`
 `fo`                      | Equivalent to `fe`, but opens file with `$OPENER` (default: `xdg-open`) if you press <kbd>Ctrl+O</kbd>
 `v`                       | Open selected files from `~/.viminfo` with `$EDITOR`
