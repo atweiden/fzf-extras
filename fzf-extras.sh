@@ -4,12 +4,26 @@
 # directory
 # -----------------------------------------------------------------------------
 
+# fzf --preview command for file and directory
+if type bat >/dev/null 2>&1; then
+    FZF_PREVIEW_CMD='bat --color=always --plain --line-range :$FZF_PREVIEW_LINES {}'
+elif type pygmentize >/dev/null 2>&1; then
+    FZF_PREVIEW_CMD='head -n $FZF_PREVIEW_LINES {} | pygmentize -g'
+else
+    FZF_PREVIEW_CMD='head -n $FZF_PREVIEW_LINES {}'
+fi
+
 # zdd - cd to selected directory
 zdd() {
   local dir
   dir="$(
     find "${1:-.}" -path '*/\.*' -prune -o -type d -print 2> /dev/null \
-      | fzf +m
+      | fzf +m \
+          --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)' \
   )" || return
   cd "$dir" || return
 }
@@ -19,7 +33,12 @@ zda() {
   local dir
   dir="$(
     find "${1:-.}" -type d 2> /dev/null \
-      | fzf +m
+      | fzf +m \
+          --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)' \
   )" || return
   cd "$dir" || return
 }
@@ -40,7 +59,12 @@ zdr() {
 
   parent_dir="$(
     get_parent_dirs "$(realpath "${1:-$PWD}")" \
-      | fzf +m
+      | fzf +m \
+          --preview 'tree -C {} | head -n $FZF_PREVIEW_LINES' \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)' \
   )" || return
 
   cd "$parent_dir" || return
@@ -54,9 +78,15 @@ zst() {
       | sed 's#\s#\n#g' \
       | uniq \
       | sed "s#^~#$HOME#" \
-      | fzf +s +m -1 -q "$*"
+      | fzf +s +m -1 -q "$*" \
+            --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+            --preview-window='right:hidden:wrap' \
+            --bind=ctrl-v:toggle-preview \
+            --bind=ctrl-x:toggle-sort \
+            --header='(view:ctrl-v) (sort:ctrl-x)' \
   )"
-  # $dirの存在を確かめないとCtrl-Cしたとき$HOMEにcdしてしまう
+  # check $dir exists for Ctrl-C interrupt
+  # or change directory to $HOME (= no value cd)
   if [[ -d "$dir" ]]; then
     cd "$dir" || return
   fi
@@ -65,7 +95,13 @@ zst() {
 # zdf - cd into the directory of the selected file
 zdf() {
   local file
-  file="$(fzf +m -q "$*")"
+  file="$(fzf +m -q "$*" \
+           --preview="${FZF_PREVIEW_CMD}" \
+           --preview-window='right:hidden:wrap' \
+           --bind=ctrl-v:toggle-preview \
+           --bind=ctrl-x:toggle-sort \
+           --header='(view:ctrl-v) (sort:ctrl-x)' \
+       )"
   cd "$(dirname "$file")" || return
 }
 
@@ -84,7 +120,11 @@ zz() {
           --tiebreak=index \
           --bind=ctrl-x:toggle-sort \
           --query "$*" \
-      | grep -o '/.*'
+          --preview='tree -C {} | head -n $FZF_PREVIEW_LINES' \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)' \
   )" || return
 
   cd "$dir" || return
@@ -148,9 +188,11 @@ EOF
 
 # e - open 'frecency' files in $VISUAL editor
 e() {
-  local files
+  local IFS=$'\n'
+  local files=()
 
-  files="$(
+  files=(
+  "$(
     fasd -fl \
       | fzf \
           --tac \
@@ -160,10 +202,15 @@ e() {
           --tiebreak=index \
           --bind=ctrl-x:toggle-sort \
           --query "$*" \
-      | grep -o "/.*"
-  )" || echo 'No file selected'; return
+          --preview="${FZF_PREVIEW_CMD}" \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)' \
+      )"
+  ) || return
 
-  "${VISUAL:-vim}" "$files"
+  "${EDITOR:-vim}" "${files[@]}"
 }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -177,7 +224,12 @@ fe() {
           --query="$1" \
           --multi \
           --select-1 \
-          --exit-0
+          --exit-0 \
+          --preview="${FZF_PREVIEW_CMD}" \
+          --preview-window='right:hidden:wrap' \
+          --bind=ctrl-v:toggle-preview \
+          --bind=ctrl-x:toggle-sort \
+          --header='(view:ctrl-v) (sort:ctrl-x)'
     )"
   ) || return
   "${EDITOR:-vim}" "${files[@]}"
